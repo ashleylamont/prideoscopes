@@ -5,7 +5,8 @@
   "main": "sketch.js",
   "scripts": {
     "build": "rollup -c",
-    "serve": "rollup -c -w"
+    "serve": "rollup -c -w",
+    "lint": "eslint"
   },
   "repository": {
     "type": "git",
