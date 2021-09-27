@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "es6",
+    "target": "es6",
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "Node"
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
