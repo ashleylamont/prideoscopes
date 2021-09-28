@@ -10,12 +10,15 @@
         window.localStorage.setItem('instructions', 'done');
     }
     const sketch = (p) => {
+        // eslint-disable-next-line no-param-reassign
         p.setup = () => {
             p.createCanvas(p.windowWidth, p.windowHeight);
         };
+        // eslint-disable-next-line no-param-reassign
         p.draw = () => {
         };
     };
+    // eslint-disable-next-line no-new
     new P5__default["default"](sketch);
 
 })(p5);
