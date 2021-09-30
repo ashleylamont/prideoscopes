@@ -94,4 +94,32 @@ export default {
     '#9C4E97',
     '#0035AA',
   ],
+  mlm: [
+    '#078E70',
+    '#26CEAA',
+    '#98E8C1',
+    '#F1EEFF',
+    '#7BADE2',
+    '#5049CB',
+    '#3D1A78',
+  ],
+  simplifiedmlm: [
+    '#078D70',
+    '#99E8C2',
+    '#FFFFFF',
+    '#7BADE3',
+    '#3E1A78',
+  ],
+  sapphic: [
+    '#FE8CA9',
+    '#FCF3FF',
+    '#F599C8',
+    '#FFF71B',
+  ],
+  achillean: [
+    '#9AC6E9',
+    '#FAFDEA',
+    '#659533',
+    '#ADDE4E',
+  ],
 };
