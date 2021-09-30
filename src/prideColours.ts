@@ -94,7 +94,7 @@ export default {
     '#9C4E97',
     '#0035AA',
   ],
-  mlm: [
+  vincian: [
     '#078E70',
     '#26CEAA',
     '#98E8C1',
@@ -103,7 +103,7 @@ export default {
     '#5049CB',
     '#3D1A78',
   ],
-  simplifiedmlm: [
+  simplifiedvincian: [
     '#078D70',
     '#99E8C2',
     '#FFFFFF',
