@@ -17,7 +17,7 @@ export default function flower(
   graphics.rotate(myRot);
   // function to generate petals (and a middle bit, which i called a stamen,
   // but i'm not sure its actually called that)
-  function genPets(r: number, num: any, stamenType: number, sSize: number) {
+  function genPets(r: number, num: number, stamenType: number, sSize: number) {
     function petal(b: number, h: number) {
       graphics.beginShape();
       // base L
