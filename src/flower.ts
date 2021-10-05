@@ -3,7 +3,7 @@ import P5 from 'p5';
 // c : array of colours
 // should probably make this export a flower graphics object
 export default function flower(
-  p: P5, c: P5.Color[], x : number, y: number, width: number, height: number,
+  p: P5, c: String[], x : number, y: number, width: number, height: number,
 ): P5.Graphics {
   const graphics = p.createGraphics(width, height);
   graphics.noStroke();
