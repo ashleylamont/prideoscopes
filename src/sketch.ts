@@ -1,4 +1,5 @@
 import P5 from 'p5';
+import dat, { GUI } from 'dat.gui';
 import drawSlice from './slice';
 import drawMask from './sliceMask';
 import graphicsToImage from './graphicsToImage';
@@ -9,9 +10,26 @@ if (window.localStorage.getItem('instructions') === null) {
   window.localStorage.setItem('instructions', 'done');
 }
 
+const objectHash = (window as any).objectHash as any;
+
 const sketch = (p: P5) => {
+  let gui: GUI;
   // eslint-disable-next-line no-param-reassign
   p.setup = async () => {
+    gui = new dat.GUI({
+      name: 'Pride Art Generator',
+    });
+
+    const input = {
+      name: 'Name',
+      flag: 'pride',
+    };
+
+    gui.add(input, 'name');
+    gui.show();
+
+    // const nameHash = hash.default(name);
+    console.log(objectHash);
     p.createCanvas(p.windowWidth, p.windowHeight);
     p.background(50);
     const n = 3;
