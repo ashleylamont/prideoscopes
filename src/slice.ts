@@ -6,10 +6,7 @@ import AssetManager from './assetManager';
 export default function drawSlice(p: P5, assetManager: AssetManager, hash: string[]): P5.Graphics {
   // @ts-ignore
   random.use(seedrandom(hash.join('')));
-  console.log('================');
-  for (let i = 0; i < 5; i += 1) {
-    console.log(random.boolean());
-  }
+
   const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
   graphics.noStroke();
 
