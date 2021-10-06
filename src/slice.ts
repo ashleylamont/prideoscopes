@@ -1,7 +1,8 @@
 import P5 from 'p5';
-import AssetManager from './assetManager';
+import promisify from './promisify';
+import flower from './flower';
 
-export default function drawSlice(p: P5, assetManager: AssetManager, hash: string[]): P5.Graphics {
+export default async function drawSlice(p: P5): Promise<P5.Graphics> {
   const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
   graphics.noStroke();
 
@@ -10,13 +11,24 @@ export default function drawSlice(p: P5, assetManager: AssetManager, hash: strin
     '#F5AAB9',
     '#FFFFFF',
   ];
-
+  const pride = [
+    '#FF1E26',
+    '#FE941E',
+    '#FFFF00',
+    '#06BF00',
+    '#001A96',
+    '#760088',
+  ];
   for (let i = 0; i < 200; i += 1) {
-    graphics.fill(p.random(colours));
-    graphics.circle(p.random(0, p.windowWidth), p.random(0, p.windowHeight), p.random(50, 200));
+    // graphics.fill(p.random(colours));
+    flower(p, pride, p.random(0, p.windowWidth), p.random(0, p.windowHeight),
+      p.random(50, 200), p.random(50, 200));
+    flower(p, colours, p.random(0, p.windowWidth), p.random(0, p.windowHeight),
+      p.random(50, 200), p.random(50, 200));
+    // graphics.circle(p.random(0, p.windowWidth), p.random(0, p.windowHeight), p.random(50, 200));
   }
 
-  const butterfly = assetManager.getAsset('butterfly.png');
+  const butterfly = await promisify(p.loadImage)('assets/butterfly.png');
   graphics.image(butterfly, 168, p.windowHeight / 2 + 200, 150, 100);
 
   return graphics;
