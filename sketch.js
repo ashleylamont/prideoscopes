@@ -2551,27 +2551,21 @@
       GUI: GUI$1
     };
 
-    const promisify = (fn) => ((args) => new Promise((resolve, reject) => {
-        fn(args, resolve, reject);
-    }));
-
-    function drawSlice(p) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
-            graphics.noStroke();
-            const colours = [
-                '#5BCEFA',
-                '#F5AAB9',
-                '#FFFFFF',
-            ];
-            for (let i = 0; i < 200; i += 1) {
-                graphics.fill(p.random(colours));
-                graphics.circle(p.random(0, p.windowWidth), p.random(0, p.windowHeight), p.random(50, 200));
-            }
-            const butterfly = yield promisify(p.loadImage)('assets/butterfly.png');
-            graphics.image(butterfly, 168, p.windowHeight / 2 + 200, 150, 100);
-            return graphics;
-        });
+    function drawSlice(p, assetManager, hash) {
+        const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
+        graphics.noStroke();
+        const colours = [
+            '#5BCEFA',
+            '#F5AAB9',
+            '#FFFFFF',
+        ];
+        for (let i = 0; i < 200; i += 1) {
+            graphics.fill(p.random(colours));
+            graphics.circle(p.random(0, p.windowWidth), p.random(0, p.windowHeight), p.random(50, 200));
+        }
+        const butterfly = assetManager.getAsset('butterfly.png');
+        graphics.image(butterfly, 168, p.windowHeight / 2 + 200, 150, 100);
+        return graphics;
     }
 
     function drawMask(p, startAngle, endAngle) {
@@ -2601,6 +2595,26 @@
         return g;
     }
 
+    class AssetManager {
+        constructor(p) {
+            this.p = p;
+            this.assetStore = new Map();
+        }
+        getAsset(assetName) {
+            return this.assetStore.get(assetName);
+        }
+        fetchAsset(assetName) {
+            return new Promise((resolve, reject) => {
+                if (this.assetStore.has(assetName))
+                    resolve();
+                this.p.loadImage(`assets/${assetName}`, (image) => {
+                    this.assetStore.set(assetName, image);
+                    resolve();
+                }, reject);
+            });
+        }
+    }
+
     if (window.localStorage.getItem('instructions') === null) {
         // Any needed instructions can go here.
         window.localStorage.setItem('instructions', 'done');
@@ -2608,45 +2622,60 @@
     const objectHash = window.objectHash;
     const sketch = (p) => {
         let gui;
+        let loading = true;
+        let assetManager;
+        let input;
         // eslint-disable-next-line no-param-reassign
         p.setup = () => __awaiter(void 0, void 0, void 0, function* () {
             gui = new index.GUI({
                 name: 'Pride Art Generator',
             });
-            const input = {
+            input = {
                 name: 'Name',
                 flag: 'pride',
             };
             gui.add(input, 'name');
             gui.show();
-            // const nameHash = hash.default(name);
-            console.log(objectHash);
             p.createCanvas(p.windowWidth, p.windowHeight);
-            p.background(50);
-            const n = 3;
-            const mask = drawMask(p, 0, (Math.PI) / n);
-            const flippedMask = drawMask(p, -(Math.PI) / n, 0);
-            const background = yield drawSlice(p);
-            const flippedBackground = flipVertical(p, background);
-            const bgImg = graphicsToImage(p, background);
-            const flippedBgImage = graphicsToImage(p, flippedBackground);
-            const maskImg = graphicsToImage(p, mask);
-            const flippedMaskImg = graphicsToImage(p, flippedMask);
-            // p.image(maskImg, 0, 0);
-            // p.image(bgImg, 0, 0);
-            p.translate(p.windowWidth / 2, p.windowHeight / 2);
-            bgImg.mask(maskImg);
-            flippedBgImage.mask(flippedMaskImg);
-            for (let i = 0; i < n; i += 1) {
-                p.translate(0, -p.windowHeight / 2);
-                p.image(bgImg, 0, 0);
-                p.image(flippedBgImage, 0, 0);
-                p.translate(0, p.windowHeight / 2);
-                p.rotate((2 * Math.PI) / n);
-            }
+            assetManager = new AssetManager(p);
+            yield assetManager.fetchAsset('butterfly.png');
+            yield assetManager.fetchAsset('butterflywhite.png');
+            loading = false;
         });
         // eslint-disable-next-line no-param-reassign
         p.draw = () => {
+            p.clear();
+            p.background(50);
+            if (loading) {
+                p.textAlign(p.CENTER, p.CENTER);
+                p.fill('#FFFFFF');
+                p.text('Loading...', p.width / 2, p.height / 2);
+            }
+            else {
+                // 40 Hexadecimal characters
+                [...objectHash(input.name)];
+                const n = 3;
+                const mask = drawMask(p, 0, (Math.PI) / n);
+                const flippedMask = drawMask(p, -(Math.PI) / n, 0);
+                const background = drawSlice(p, assetManager);
+                const flippedBackground = flipVertical(p, background);
+                const bgImg = graphicsToImage(p, background);
+                const flippedBgImage = graphicsToImage(p, flippedBackground);
+                const maskImg = graphicsToImage(p, mask);
+                const flippedMaskImg = graphicsToImage(p, flippedMask);
+                // p.image(maskImg, 0, 0);
+                // p.image(bgImg, 0, 0);
+                p.translate(p.windowWidth / 2, p.windowHeight / 2);
+                bgImg.mask(maskImg);
+                flippedBgImage.mask(flippedMaskImg);
+                for (let i = 0; i < n; i += 1) {
+                    p.translate(0, -p.windowHeight / 2);
+                    p.image(bgImg, 0, 0);
+                    p.image(flippedBgImage, 0, 0);
+                    p.translate(0, p.windowHeight / 2);
+                    p.rotate((2 * Math.PI) / n);
+                }
+            }
         };
     };
     // eslint-disable-next-line no-new

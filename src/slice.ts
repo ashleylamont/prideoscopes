@@ -1,7 +1,7 @@
 import P5 from 'p5';
-import promisify from './promisify';
+import AssetManager from './assetManager';
 
-export default async function drawSlice(p: P5): Promise<P5.Graphics> {
+export default function drawSlice(p: P5, assetManager: AssetManager, hash: string[]): P5.Graphics {
   const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
   graphics.noStroke();
 
@@ -16,7 +16,7 @@ export default async function drawSlice(p: P5): Promise<P5.Graphics> {
     graphics.circle(p.random(0, p.windowWidth), p.random(0, p.windowHeight), p.random(50, 200));
   }
 
-  const butterfly = await promisify(p.loadImage)('assets/butterfly.png');
+  const butterfly = assetManager.getAsset('butterfly.png');
   graphics.image(butterfly, 168, p.windowHeight / 2 + 200, 150, 100);
 
   return graphics;
