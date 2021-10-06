@@ -4156,15 +4156,227 @@
     // defaults to Math.random as its RNG
     var random = new Random();
 
-    function drawSlice(p, assetManager, hash) {
-        // @ts-ignore
-        random.use(seedrandom(hash.join('')));
-        console.log('================');
-        for (let i = 0; i < 5; i += 1) {
-            console.log(random.boolean());
+    var prideColours = {
+        transgender: [
+            '#5BCEFA',
+            '#F5AAB9',
+            '#FFFFFF',
+        ],
+        agender: [
+            '#000000',
+            '#BCC4C7',
+            '#A5FA5E',
+        ],
+        genderfluid: [
+            '#FA4288',
+            '#FFFFFF',
+            '#71197F',
+            '#000000',
+            '#071195',
+        ],
+        asexual: [
+            '#000000',
+            '#9D9F9E',
+            '#FFFFFF',
+            '#5E1984',
+        ],
+        aromantic: [
+            '#3DA542',
+            '#A7DE79',
+            '#FFFFFF',
+            '#A9A9A9',
+            '#000000',
+        ],
+        lesbian: [
+            '#D42C00',
+            '#FD9855',
+            '#FFFFFF',
+            '#D161A2',
+            '#A20161',
+        ],
+        genderqueer: [
+            '#B57EDC',
+            '#FFFFFF',
+            '#4A8122',
+        ],
+        pride: [
+            '#FF1E26',
+            '#FE941E',
+            '#FFFF00',
+            '#06BF00',
+            '#001A96',
+            '#760088',
+        ],
+        progressPride: [
+            '#FFFFFF',
+            '#FDAFC7',
+            '#75D5EB',
+            '#603814',
+            '#000000',
+            '#FF1E26',
+            '#FE941E',
+            '#FFFF00',
+            '#06BF00',
+            '#001A96',
+            '#760088',
+        ],
+        demisexual: [
+            '#FFFFFF',
+            '#7E287F',
+            '#A3A3A3',
+            '#000000',
+        ],
+        pansexual: [
+            '#FE218B',
+            '#FED700',
+            '#21B0FE',
+        ],
+        intersex: [
+            '#7902AA',
+            '#FFD800',
+        ],
+        nonbinary: [
+            '#FCF431',
+            '#FFFFFF',
+            '#9D59D2',
+            '#000000',
+        ],
+        polyamory: [
+            '#0000FF',
+            '#FF0000',
+            '#FFFF00',
+            '#000000',
+        ],
+        bisexual: [
+            '#D70071',
+            '#9C4E97',
+            '#0035AA',
+        ],
+        vincian: [
+            '#078E70',
+            '#26CEAA',
+            '#98E8C1',
+            '#F1EEFF',
+            '#7BADE2',
+            '#5049CB',
+            '#3D1A78',
+        ],
+        simplifiedvincian: [
+            '#078D70',
+            '#99E8C2',
+            '#FFFFFF',
+            '#7BADE3',
+            '#3E1A78',
+        ],
+        sapphic: [
+            '#FE8CA9',
+            '#FCF3FF',
+            '#F599C8',
+            '#FFF71B',
+        ],
+        achillean: [
+            '#9AC6E9',
+            '#FAFDEA',
+            '#659533',
+            '#ADDE4E',
+        ],
+    };
+
+    // x, y : locations
+    // c : array of colours
+    // should probably make this export a flower graphics object
+    function flower(p, c, x, y, width, height) {
+        const graphics = p.createGraphics(width, height);
+        graphics.noStroke();
+        const sType = p.random([0, 1]);
+        let radi = p.random(50, 300);
+        const w = p.random(10, 20);
+        const myRot = p.random(0, 360);
+        graphics.push();
+        graphics.angleMode(p.DEGREES);
+        graphics.translate(x, y);
+        graphics.rotate(myRot);
+        // function to generate petals (and a middle bit, which i called a stamen,
+        // but i'm not sure its actually called that)
+        function genPets(r, num, stamenType, sSize) {
+            function petal(b, h) {
+                graphics.beginShape();
+                // base L
+                graphics.curveVertex(-b, 0);
+                graphics.curveVertex(-b, 0);
+                // width, halfway up petal
+                graphics.curveVertex(-w, h / 2);
+                // top of the petal
+                graphics.curveVertex(0, h);
+                // width, halfway up petal
+                graphics.curveVertex(w, h / 2);
+                // base R
+                graphics.curveVertex(b, 0);
+                graphics.curveVertex(b, 0);
+                graphics.endShape();
+            }
+            // transformation matrix
+            graphics.push();
+            graphics.noStroke();
+            graphics.fill(p.random(c));
+            graphics.angleMode(p.DEGREES);
+            const rAngle = (360 / num);
+            for (let i = 0; i < num; i += 1) {
+                graphics.rotate(rAngle);
+                petal(w / 2, r / 2);
+            }
+            graphics.pop();
+            graphics.push();
+            graphics.noStroke();
+            graphics.fill(p.random(c));
+            switch (stamenType) {
+                // circle stamen
+                case 0:
+                    graphics.circle(0, 0, sSize);
+                    break;
+                // square stamen
+                case 1:
+                    graphics.rect(0 - 0.25 * sSize, 0 - 0.25 * sSize, sSize * 0.5, sSize * 0.5);
+                    break;
+            }
+            // reset transformation matrix
+            graphics.pop();
         }
+        // generate 3 lots of petals, each slightly smaller than previous
+        genPets(radi, p.random([3, 4, 8, 12, 16]), 2, 0);
+        radi -= (radi * 0.5);
+        genPets(radi, p.random([3, 4, 8, 12, 16]), 2, 0);
+        radi -= (radi * 0.4);
+        const sSize = p.random(radi * 0.2, radi * 0.4);
+        genPets(radi, p.random([3, 4, 8, 12, 16]), sType, sSize);
+        // reset transformation matrix
+        graphics.pop();
+        return graphics;
+    }
+
+    function drawSlice(p, assetManager, input) {
+        // @ts-ignore
+        random.use(seedrandom(input.name));
         const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
         graphics.noStroke();
+        const colours = prideColours[input.flag];
+        // const pride = [
+        //   '#FF1E26',
+        //   '#FE941E',
+        //   '#FFFF00',
+        //   '#06BF00',
+        //   '#001A96',
+        //   '#760088',
+        // ];
+        for (let i = 0; i < 5; i += 1) {
+            // graphics.fill(p.random(colours));
+            // flower(p, pride, p.random(0, p.windowWidth), p.random(0, p.windowHeight),
+            //   p.random(50, 200), p.random(50, 200));
+            const f = flower(p, colours, p.random(0, p.windowWidth), p.random(0, p.windowHeight), p.random(50, 200), p.random(50, 200));
+            graphics.image(f, p.random(0, graphics.width), p.random(0, graphics.height));
+            f.remove();
+            // graphics.circle(p.random(0, p.windowWidth), p.random(0, p.windowHeight), p.random(50, 200));
+        }
         const butterfly = assetManager.getAsset('butterfly.png');
         graphics.image(butterfly, 168, p.windowHeight / 2 + 200, 150, 100);
         return graphics;
@@ -4221,7 +4433,7 @@
         // Any needed instructions can go here.
         window.localStorage.setItem('instructions', 'done');
     }
-    const objectHash = window.objectHash;
+    // const objectHash = (window as any).objectHash as any;
     const sketch = (p) => {
         let gui;
         let loading = true;
@@ -4237,6 +4449,7 @@
                 flag: 'pride',
             };
             gui.add(input, 'name');
+            gui.add(input, 'flag', Object.keys(prideColours));
             gui.show();
             p.createCanvas(p.windowWidth, p.windowHeight);
             assetManager = new AssetManager(p);
@@ -4255,11 +4468,11 @@
             }
             else {
                 // 40 Hexadecimal characters
-                const nameHash = [...objectHash(input.name)];
+                // const nameHash: string[] = [...objectHash(input.name)];
                 const n = 3;
                 const mask = drawMask(p, 0, (Math.PI) / n);
                 const flippedMask = drawMask(p, -(Math.PI) / n, 0);
-                const background = drawSlice(p, assetManager, nameHash);
+                const background = drawSlice(p, assetManager, input);
                 const flippedBackground = flipVertical(p, background);
                 const bgImg = graphicsToImage(p, background);
                 const flippedBgImage = graphicsToImage(p, flippedBackground);
@@ -4277,6 +4490,10 @@
                     p.translate(0, p.windowHeight / 2);
                     p.rotate((2 * Math.PI) / n);
                 }
+                background.remove();
+                flippedBackground.remove();
+                mask.remove();
+                flippedMask.remove();
             }
         };
     };

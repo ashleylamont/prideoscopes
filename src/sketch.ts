@@ -5,13 +5,14 @@ import drawMask from './sliceMask';
 import graphicsToImage from './graphicsToImage';
 import flipVertical from './flipVertical';
 import AssetManager from './assetManager';
+import prideColours from './prideColours';
 
 if (window.localStorage.getItem('instructions') === null) {
   // Any needed instructions can go here.
   window.localStorage.setItem('instructions', 'done');
 }
 
-const objectHash = (window as any).objectHash as any;
+// const objectHash = (window as any).objectHash as any;
 
 const sketch = (p: P5) => {
   let gui: GUI;
@@ -30,6 +31,7 @@ const sketch = (p: P5) => {
     };
 
     gui.add(input, 'name');
+    gui.add(input, 'flag', Object.keys(prideColours));
     gui.show();
 
     p.createCanvas(p.windowWidth, p.windowHeight);
@@ -50,7 +52,7 @@ const sketch = (p: P5) => {
       p.text('Loading...', p.width / 2, p.height / 2);
     } else {
       // 40 Hexadecimal characters
-      const nameHash: string[] = [...objectHash(input.name)];
+      // const nameHash: string[] = [...objectHash(input.name)];
       const n = 3;
       const mask = drawMask(
         p,
@@ -62,7 +64,7 @@ const sketch = (p: P5) => {
         -(Math.PI) / n,
         0,
       );
-      const background = drawSlice(p, assetManager, nameHash);
+      const background = drawSlice(p, assetManager, input);
       const flippedBackground = flipVertical(p, background);
       const bgImg = graphicsToImage(p, background);
       const flippedBgImage = graphicsToImage(p, flippedBackground);
@@ -81,6 +83,10 @@ const sketch = (p: P5) => {
 
         p.rotate((2 * Math.PI) / n);
       }
+      background.remove();
+      flippedBackground.remove();
+      mask.remove();
+      flippedMask.remove();
     }
   };
 };

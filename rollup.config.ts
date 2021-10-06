@@ -6,7 +6,7 @@ export default {
   input: 'src/sketch.ts',
   external: [
     'p5',
-    'objectHash'
+    // 'objectHash'
   ],
   output: {
     file: 'sketch.js',
@@ -15,7 +15,7 @@ export default {
     name: 'sketch',
     globals: {
       p5: 'p5',
-      'object-hash': 'objectHash'
+      // 'object-hash': 'objectHash'
     }
   },
   plugins: [
