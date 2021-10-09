@@ -4285,20 +4285,20 @@
     // x, y : locations
     // c : array of colours
     // should probably make this export a flower graphics object
-    function flower(p, c, x, y, width, height) {
+    function flower(p, c, x, y, width, height, rand) {
         const graphics = p.createGraphics(width, height);
         graphics.noStroke();
-        const sType = p.random([0, 1]);
-        let radi = p.random(50, 300);
-        const w = p.random(10, 20);
-        const myRot = p.random(0, 360);
+        const sType = rand.integer(0, 1);
+        let radii = rand.float(50, 300);
+        const w = rand.float(10, 20);
+        const myRot = rand.float(0, 360);
         graphics.push();
         graphics.angleMode(p.DEGREES);
         graphics.translate(x, y);
         graphics.rotate(myRot);
         // function to generate petals (and a middle bit, which i called a stamen,
         // but i'm not sure its actually called that)
-        function genPets(r, num, stamenType, sSize) {
+        function genPets(r, q, stamenType, sSize) {
             function petal(b, h) {
                 graphics.beginShape();
                 // base L
@@ -4315,6 +4315,8 @@
                 graphics.curveVertex(b, 0);
                 graphics.endShape();
             }
+            const petalNumArray = [3, 4, 8, 12, 16];
+            const num = petalNumArray.at(q);
             // transformation matrix
             graphics.push();
             graphics.noStroke();
@@ -4343,44 +4345,91 @@
             graphics.pop();
         }
         // generate 3 lots of petals, each slightly smaller than previous
-        genPets(radi, p.random([3, 4, 8, 12, 16]), 2, 0);
-        radi -= (radi * 0.5);
-        genPets(radi, p.random([3, 4, 8, 12, 16]), 2, 0);
-        radi -= (radi * 0.4);
-        const sSize = p.random(radi * 0.2, radi * 0.4);
-        genPets(radi, p.random([3, 4, 8, 12, 16]), sType, sSize);
+        genPets(radii, rand.integer(0, 5), 2, 0);
+        radii -= (radii * 0.5);
+        genPets(radii, rand.integer(0, 5), 2, 0);
+        radii -= (radii * 0.4);
+        const sSize = rand.float(radii * 0.2, radii * 0.4);
+        genPets(radii, rand.integer(0, 5), sType, sSize);
         // reset transformation matrix
         graphics.pop();
         return graphics;
     }
 
-    function drawSlice(p, assetManager, input) {
+    function drawSlice(p, assetManager, input, n) {
         // @ts-ignore
-        random.use(seedrandom(input.name));
         const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
         graphics.noStroke();
+        // @ts-ignore
+        const rand = random;
+        // @ts-ignore
+        rand.use(seedrandom(input.name));
         const colours = prideColours[input.flag];
-        // const pride = [
-        //   '#FF1E26',
-        //   '#FE941E',
-        //   '#FFFF00',
-        //   '#06BF00',
-        //   '#001A96',
-        //   '#760088',
-        // ];
+        console.log('================');
         for (let i = 0; i < 5; i += 1) {
-            // graphics.fill(p.random(colours));
+            console.log(rand.float(0, 10));
+        }
+        const fSize = 1000;
+        const xOffset = -1 * (fSize / 2);
+        const baseY = p.windowHeight / 2;
+        const endAngle = (Math.PI) / n;
+        for (let i = 0; i < 20; i += 1) {
+            // const colourIndex = random.integer(0, colours.length);
+            // graphics.fill(colours.at(colourIndex));
             // flower(p, pride, p.random(0, p.windowWidth), p.random(0, p.windowHeight),
             //   p.random(50, 200), p.random(50, 200));
-            const f = flower(p, colours, p.random(0, p.windowWidth), p.random(0, p.windowHeight), p.random(50, 200), p.random(50, 200));
-            graphics.image(f, p.random(0, graphics.width), p.random(0, graphics.height));
-            f.remove();
-            // graphics.circle(p.random(0, p.windowWidth), p.random(0, p.windowHeight), p.random(50, 200));
+            const f = flower(p, colours, -xOffset, baseY, fSize, fSize, rand);
+            // console.log(f);
+            graphics.image(f, rand.float(xOffset, Math.sin(endAngle) * baseY + xOffset), rand.float(Math.sin(endAngle) * -baseY, Math.sin(endAngle) * baseY));
+            // f.remove();
+            // graphics.image(f, p.random(-200, -500), p.random(-100, -300));
+            // graphics.circle(p.random(0, 300),
+            // p.random(p.windowHeight / 2, p.windowHeight / 2 + 400), p.random(50, 200));
+            // graphics.image(butterfly, p.random(0, 400),
+            //  p.random(p.windowHeight / 2, p.windowHeight / 2 + 400), 150, 100);
         }
         const butterfly = assetManager.getAsset('butterfly.png');
         graphics.image(butterfly, 168, p.windowHeight / 2 + 200, 150, 100);
         return graphics;
     }
+    /*
+
+    export default function drawSlice(
+      p: P5, assetManager: AssetManager, input: { name: string, flag: string },
+    ): P5.Graphics {
+      // @ts-ignore
+      // random.use(seedrandom(input.name));
+      Math.seedrandom(input.name);
+      const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
+      graphics.noStroke();
+
+      const colours: string[] = prideColours[input.flag];
+      // const pride = [
+      //   '#FF1E26',
+      //   '#FE941E',
+      //   '#FFFF00',
+      //   '#06BF00',
+      //   '#001A96',
+      //   '#760088',
+      // ];
+
+      for (let i = 0; i < 5; i += 1) {
+        // graphics.fill(p.random(colours));
+        // flower(p, pride, p.random(0, p.windowWidth), p.random(0, p.windowHeight),
+        //   p.random(50, 200), p.random(50, 200));
+        const f = flower(p, colours, randomRange(0, p.windowWidth), randomRange(0, p.windowHeight),
+          randomRange(50, 200), randomRange(50, 200));
+        graphics.image(f, randomRange(0, graphics.width), randomRange(0, graphics.height));
+        f.remove();
+        // graphics.circle(p.random(0, p.windowWidth), p.random(0, p.windowHeight), p.random(50, 200));
+      }
+
+      const butterfly = assetManager.getAsset('butterfly.png');
+      graphics.image(butterfly, 168, p.windowHeight / 2 + 200, 150, 100);
+
+      return graphics;
+    }
+    */
 
     function drawMask(p, startAngle, endAngle) {
         const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
@@ -4459,6 +4508,7 @@
         });
         // eslint-disable-next-line no-param-reassign
         p.draw = () => {
+            p.frameRate(1);
             p.clear();
             p.background(50);
             if (loading) {
@@ -4469,10 +4519,10 @@
             else {
                 // 40 Hexadecimal characters
                 // const nameHash: string[] = [...objectHash(input.name)];
-                const n = 3;
+                const n = 4;
                 const mask = drawMask(p, 0, (Math.PI) / n);
                 const flippedMask = drawMask(p, -(Math.PI) / n, 0);
-                const background = drawSlice(p, assetManager, input);
+                const background = drawSlice(p, assetManager, input, n);
                 const flippedBackground = flipVertical(p, background);
                 const bgImg = graphicsToImage(p, background);
                 const flippedBgImage = graphicsToImage(p, flippedBackground);

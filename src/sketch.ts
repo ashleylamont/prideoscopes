@@ -44,6 +44,7 @@ const sketch = (p: P5) => {
 
   // eslint-disable-next-line no-param-reassign
   p.draw = () => {
+    p.frameRate(1);
     p.clear();
     p.background(50);
     if (loading) {
@@ -53,7 +54,7 @@ const sketch = (p: P5) => {
     } else {
       // 40 Hexadecimal characters
       // const nameHash: string[] = [...objectHash(input.name)];
-      const n = 3;
+      const n = 4;
       const mask = drawMask(
         p,
         0,
@@ -64,7 +65,7 @@ const sketch = (p: P5) => {
         -(Math.PI) / n,
         0,
       );
-      const background = drawSlice(p, assetManager, input);
+      const background = drawSlice(p, assetManager, input, n);
       const flippedBackground = flipVertical(p, background);
       const bgImg = graphicsToImage(p, background);
       const flippedBgImage = graphicsToImage(p, flippedBackground);
