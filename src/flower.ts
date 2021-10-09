@@ -19,7 +19,7 @@ export default function flower(
   graphics.rotate(myRot);
   // function to generate petals (and a middle bit, which i called a stamen,
   // but i'm not sure its actually called that)
-  function genPets(r: number, q: number, stamenType: number, sSize: number) {
+  function genPets(r: number, q: number, stamenType: number, sSize: number, cIndex: number) {
     function petal(b: number, h: number) {
       graphics.beginShape();
       // base L
@@ -38,10 +38,13 @@ export default function flower(
     }
     const petalNumArray = [3, 4, 8, 12, 16];
     const num = petalNumArray.at(q);
+    //    const myColStr = '001A96';
+    const myCol = c.at(cIndex);
     // transformation matrix
     graphics.push();
     graphics.noStroke();
-    graphics.fill(p.random(c));
+    // @ts-ignore
+    graphics.fill(myCol);
     graphics.angleMode(p.DEGREES);
     const rAngle = (360 / num);
 
@@ -52,7 +55,8 @@ export default function flower(
     graphics.pop();
     graphics.push();
     graphics.noStroke();
-    graphics.fill(p.random(c));
+    // @ts-ignore
+    graphics.fill(c.at(0));
     switch (stamenType) {
       // circle stamen
       case 0:
@@ -68,12 +72,12 @@ export default function flower(
     graphics.pop();
   }
   // generate 3 lots of petals, each slightly smaller than previous
-  genPets(radii, rand.integer(0, 5), 2, 0);
-  radii -= (radii * 0.5);
-  genPets(radii, rand.integer(0, 5), 2, 0);
+  genPets(radii, rand.integer(0, 5), 2, 0, rand.integer(0, c.length - 1));
+  radii -= (radii * 0.1);
+  genPets(radii, rand.integer(0, 5), 2, 0, rand.integer(0, c.length - 1));
   radii -= (radii * 0.4);
   const sSize = rand.float(radii * 0.2, radii * 0.4);
-  genPets(radii, rand.integer(0, 5), sType, sSize);
+  genPets(radii, rand.integer(0, 5), sType, sSize, rand.integer(0, c.length - 1));
   // reset transformation matrix
   graphics.pop();
   return graphics;

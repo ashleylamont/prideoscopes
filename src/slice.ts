@@ -17,20 +17,12 @@ export default function drawSlice(p: P5, assetManager: AssetManager,
   rand.use(seedrandom(input.name));
   const colours: string[] = prideColours[input.flag];
 
-  console.log('================');
-  for (let i = 0; i < 5; i += 1) {
-    console.log(rand.float(0, 10));
-  }
   const fSize = 1000;
   const xOffset = -1 * (fSize / 2);
   const baseY = p.windowHeight / 2;
   const endAngle = (Math.PI) / n;
 
-  for (let i = 0; i < 20; i += 1) {
-    // const colourIndex = random.integer(0, colours.length);
-    // graphics.fill(colours.at(colourIndex));
-    // flower(p, pride, p.random(0, p.windowWidth), p.random(0, p.windowHeight),
-    //   p.random(50, 200), p.random(50, 200));
+  for (let i = 0; i < 6; i += 1) {
     const f = flower(p, colours, -xOffset, baseY, fSize, fSize, rand);
     // console.log(f);
     graphics.image(f, rand.float(xOffset, Math.sin(endAngle) * baseY + xOffset),

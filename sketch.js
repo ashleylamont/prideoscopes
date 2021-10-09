@@ -4298,7 +4298,7 @@
         graphics.rotate(myRot);
         // function to generate petals (and a middle bit, which i called a stamen,
         // but i'm not sure its actually called that)
-        function genPets(r, q, stamenType, sSize) {
+        function genPets(r, q, stamenType, sSize, cIndex) {
             function petal(b, h) {
                 graphics.beginShape();
                 // base L
@@ -4317,10 +4317,13 @@
             }
             const petalNumArray = [3, 4, 8, 12, 16];
             const num = petalNumArray.at(q);
+            //    const myColStr = '001A96';
+            const myCol = c.at(cIndex);
             // transformation matrix
             graphics.push();
             graphics.noStroke();
-            graphics.fill(p.random(c));
+            // @ts-ignore
+            graphics.fill(myCol);
             graphics.angleMode(p.DEGREES);
             const rAngle = (360 / num);
             for (let i = 0; i < num; i += 1) {
@@ -4330,7 +4333,8 @@
             graphics.pop();
             graphics.push();
             graphics.noStroke();
-            graphics.fill(p.random(c));
+            // @ts-ignore
+            graphics.fill(c.at(0));
             switch (stamenType) {
                 // circle stamen
                 case 0:
@@ -4345,12 +4349,12 @@
             graphics.pop();
         }
         // generate 3 lots of petals, each slightly smaller than previous
-        genPets(radii, rand.integer(0, 5), 2, 0);
-        radii -= (radii * 0.5);
-        genPets(radii, rand.integer(0, 5), 2, 0);
+        genPets(radii, rand.integer(0, 5), 2, 0, rand.integer(0, c.length - 1));
+        radii -= (radii * 0.1);
+        genPets(radii, rand.integer(0, 5), 2, 0, rand.integer(0, c.length - 1));
         radii -= (radii * 0.4);
         const sSize = rand.float(radii * 0.2, radii * 0.4);
-        genPets(radii, rand.integer(0, 5), sType, sSize);
+        genPets(radii, rand.integer(0, 5), sType, sSize, rand.integer(0, c.length - 1));
         // reset transformation matrix
         graphics.pop();
         return graphics;
@@ -4365,19 +4369,11 @@
         // @ts-ignore
         rand.use(seedrandom(input.name));
         const colours = prideColours[input.flag];
-        console.log('================');
-        for (let i = 0; i < 5; i += 1) {
-            console.log(rand.float(0, 10));
-        }
         const fSize = 1000;
         const xOffset = -1 * (fSize / 2);
         const baseY = p.windowHeight / 2;
         const endAngle = (Math.PI) / n;
-        for (let i = 0; i < 20; i += 1) {
-            // const colourIndex = random.integer(0, colours.length);
-            // graphics.fill(colours.at(colourIndex));
-            // flower(p, pride, p.random(0, p.windowWidth), p.random(0, p.windowHeight),
-            //   p.random(50, 200), p.random(50, 200));
+        for (let i = 0; i < 6; i += 1) {
             const f = flower(p, colours, -xOffset, baseY, fSize, fSize, rand);
             // console.log(f);
             graphics.image(f, rand.float(xOffset, Math.sin(endAngle) * baseY + xOffset), rand.float(Math.sin(endAngle) * -baseY, Math.sin(endAngle) * baseY));
