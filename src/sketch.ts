@@ -18,7 +18,14 @@ const sketch = (p: P5) => {
   let gui: GUI;
   let loading: boolean = true;
   let assetManager: AssetManager;
-  let input: { name: string, flag: string };
+  let input: {
+    name: string,
+    flag: string,
+    segments: number,
+    variant: number,
+    flowers: boolean,
+    butterflies: boolean
+  };
   // eslint-disable-next-line no-param-reassign
   p.setup = async () => {
     gui = new dat.GUI({
@@ -26,18 +33,25 @@ const sketch = (p: P5) => {
     });
 
     input = {
+      butterflies: true,
+      flowers: true,
       name: 'Name',
       flag: 'pride',
+      segments: 5,
+      variant: 0,
     };
 
     gui.add(input, 'name');
     gui.add(input, 'flag', Object.keys(prideColours));
+    gui.add(input, 'segments', 2, 10, 1);
+    gui.add(input, 'variant', 0, 10, 1);
+    gui.add(input, 'flowers');
+    gui.add(input, 'butterflies');
     gui.show();
 
     p.createCanvas(p.windowWidth, p.windowHeight);
 
     assetManager = new AssetManager(p);
-    await assetManager.fetchAsset('butterfly.png');
     await assetManager.fetchAsset('butterflywhite.png');
     loading = false;
   };
@@ -52,9 +66,7 @@ const sketch = (p: P5) => {
       p.fill('#FFFFFF');
       p.text('Loading...', p.width / 2, p.height / 2);
     } else {
-      // 40 Hexadecimal characters
-      // const nameHash: string[] = [...objectHash(input.name)];
-      const n = 4;
+      const n = input.segments;
       const mask = drawMask(
         p,
         0,
@@ -65,14 +77,12 @@ const sketch = (p: P5) => {
         -(Math.PI) / n,
         0,
       );
-      const background = drawSlice(p, assetManager, input, n);
+      const background = drawSlice(p, assetManager, input);
       const flippedBackground = flipVertical(p, background);
       const bgImg = graphicsToImage(p, background);
       const flippedBgImage = graphicsToImage(p, flippedBackground);
       const maskImg = graphicsToImage(p, mask);
       const flippedMaskImg = graphicsToImage(p, flippedMask);
-      // p.image(maskImg, 0, 0);
-      // p.image(bgImg, 0, 0);
       p.translate(p.windowWidth / 2, p.windowHeight / 2);
       bgImg.mask(maskImg);
       flippedBgImage.mask(flippedMaskImg);

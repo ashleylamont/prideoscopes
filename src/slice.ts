@@ -3,40 +3,29 @@ import seedrandom from 'seedrandom';
 import random from 'random';
 import AssetManager from './assetManager';
 import prideColours from './prideColours';
-import flower from './flower';
 import 'p5/src/math/random';
+import addFlowers from './addFlowers';
+import addButterflies from './addButterflies';
 
 export default function drawSlice(p: P5, assetManager: AssetManager,
-  input: { name: string, flag: string }, n : number): P5.Graphics {
+  input: {
+    name: string,
+    flag: string,
+    segments: number,
+    variant: number,
+    flowers: boolean,
+    butterflies: boolean }): P5.Graphics {
   // @ts-ignore
   const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
   graphics.noStroke();
   // @ts-ignore
   const rand = random;
   // @ts-ignore
-  rand.use(seedrandom(input.name));
+  rand.use(seedrandom(input.name + input.variant));
   const colours: string[] = prideColours[input.flag];
 
-  const fSize = 1000;
-  const xOffset = -1 * (fSize / 2);
-  const baseY = p.windowHeight / 2;
-  const endAngle = (Math.PI) / n;
-
-  for (let i = 0; i < 6; i += 1) {
-    const f = flower(p, colours, -xOffset, baseY, fSize, fSize, rand);
-    // console.log(f);
-    graphics.image(f, rand.float(xOffset, Math.sin(endAngle) * baseY + xOffset),
-      rand.float(Math.sin(endAngle) * -baseY, Math.sin(endAngle) * baseY));
-    // f.remove();
-    // graphics.image(f, p.random(-200, -500), p.random(-100, -300));
-
-    // graphics.circle(p.random(0, 300),
-    // p.random(p.windowHeight / 2, p.windowHeight / 2 + 400), p.random(50, 200));
-    // graphics.image(butterfly, p.random(0, 400),
-    //  p.random(p.windowHeight / 2, p.windowHeight / 2 + 400), 150, 100);
-  }
-  const butterfly = assetManager.getAsset('butterfly.png');
-  graphics.image(butterfly, 168, p.windowHeight / 2 + 200, 150, 100);
+  addFlowers(p, graphics, rand, colours, input);
+  addButterflies(p, graphics, rand, colours, input, assetManager);
 
   return graphics;
 }

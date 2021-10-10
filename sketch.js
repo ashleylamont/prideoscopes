@@ -4282,6 +4282,26 @@
         ],
     };
 
+    // Determines whether a point is inside of a polygon, represented as an array of vertices.
+    // From https://github.com/substack/point-in-polygon/blob/master/index.js,
+    // based on the ray-casting algorithm from https://web.archive.org/web/20180115151705/https://wrf.ecse.rpi.edu//Research/Short_Notes/pnpoly.html
+    // Wikipedia: https://en.wikipedia.org/wiki/Point_in_polygon#Ray_casting_algorithm
+    // Returns a boolean.
+    function pointInPolygon(point, polygon) {
+      let x = point[0],
+          y = point[1],
+          inside = false;
+
+      for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const xi = polygon[i][0], yi = polygon[i][1],
+              xj = polygon[j][0], yj = polygon[j][1];
+      
+        if (((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) { inside = !inside; }
+      }
+      
+      return inside;
+    }
+
     // x, y : locations
     // c : array of colours
     // should probably make this export a flower graphics object
@@ -4360,32 +4380,89 @@
         return graphics;
     }
 
-    function drawSlice(p, assetManager, input, n) {
+    function addFlowers(p, graphics, rand, colours, input) {
+        const fSize = 1000;
+        const triangleSize = 0.5 * p.windowHeight;
+        const triangleCx = 0;
+        const triangleCy = p.windowHeight / 2;
+        const slicePolygon = [
+            [triangleCx, triangleCy],
+            [triangleCx + Math.cos(0) * triangleSize,
+                triangleCy + Math.sin(0) * triangleSize],
+            [triangleCx + Math.cos((Math.PI) / input.segments) * triangleSize,
+                triangleCy + Math.sin((Math.PI) / input.segments) * triangleSize],
+        ];
+        for (let i = 0; i < 6; i += 1) {
+            const point = [0, 0];
+            do {
+                // Just spam random points until we intersect the triangle.
+                point[0] = rand.float(0, p.windowWidth);
+                point[1] = rand.float(0, p.windowHeight);
+            } while (!pointInPolygon(point, slicePolygon));
+            const f = flower(p, colours, ...point, fSize, fSize, rand);
+            // Generate the flower regardless to not affect random number generation.
+            if (input.flowers)
+                graphics.image(f, 0, 0);
+            f.remove();
+        }
+    }
+
+    // https://github.com/processing/p5.js/issues/2841
+    function graphicsToImage(p, graphics) {
+        const img = p.createImage(graphics.width, graphics.height);
+        img.copy(graphics, 0, 0, graphics.width, graphics.height, 0, 0, graphics.width, graphics.height);
+        return img;
+    }
+
+    function addButterflies(p, graphics, rand, colours, input, assetManager) {
+        const triangleSize = 0.5 * p.windowHeight;
+        const triangleCx = 0;
+        const triangleCy = p.windowHeight / 2;
+        const slicePolygon = [
+            [triangleCx, triangleCy],
+            [triangleCx + Math.cos(0) * triangleSize,
+                triangleCy + Math.sin(0) * triangleSize],
+            [triangleCx + Math.cos((Math.PI) / input.segments) * triangleSize,
+                triangleCy + Math.sin((Math.PI) / input.segments) * triangleSize],
+        ];
+        for (let i = 0; i < 2; i += 1) {
+            const point = [0, 0];
+            do {
+                // Just spam random points until we intersect the triangle.
+                point[0] = rand.float(0, p.windowWidth);
+                point[1] = rand.float(0, p.windowHeight);
+            } while (!pointInPolygon(point, slicePolygon));
+            const butterflyImage = assetManager.getAsset('butterflywhite.png');
+            const colour = colours[rand.int(0, colours.length - 1)];
+            const butterflyRotation = rand.float(0, Math.PI * 2);
+            if (input.butterflies) {
+                const solidColourGraphics = p.createGraphics(butterflyImage.width, butterflyImage.height);
+                solidColourGraphics.background(colour);
+                const solidColourImage = graphicsToImage(p, solidColourGraphics);
+                // GC hates me and it hates canvases.
+                solidColourGraphics.remove();
+                solidColourImage.mask(butterflyImage);
+                graphics.imageMode(p.CENTER);
+                graphics.translate(50 + point[0], 50 + point[1]);
+                graphics.rotate(butterflyRotation);
+                graphics.image(solidColourImage, 0, 0, 100, 100);
+                graphics.rotate(-butterflyRotation);
+                graphics.translate(-(50 + point[0]), -(50 + point[1]));
+            }
+        }
+    }
+
+    function drawSlice(p, assetManager, input) {
         // @ts-ignore
         const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
         graphics.noStroke();
         // @ts-ignore
         const rand = random;
         // @ts-ignore
-        rand.use(seedrandom(input.name));
+        rand.use(seedrandom(input.name + input.variant));
         const colours = prideColours[input.flag];
-        const fSize = 1000;
-        const xOffset = -1 * (fSize / 2);
-        const baseY = p.windowHeight / 2;
-        const endAngle = (Math.PI) / n;
-        for (let i = 0; i < 6; i += 1) {
-            const f = flower(p, colours, -xOffset, baseY, fSize, fSize, rand);
-            // console.log(f);
-            graphics.image(f, rand.float(xOffset, Math.sin(endAngle) * baseY + xOffset), rand.float(Math.sin(endAngle) * -baseY, Math.sin(endAngle) * baseY));
-            // f.remove();
-            // graphics.image(f, p.random(-200, -500), p.random(-100, -300));
-            // graphics.circle(p.random(0, 300),
-            // p.random(p.windowHeight / 2, p.windowHeight / 2 + 400), p.random(50, 200));
-            // graphics.image(butterfly, p.random(0, 400),
-            //  p.random(p.windowHeight / 2, p.windowHeight / 2 + 400), 150, 100);
-        }
-        const butterfly = assetManager.getAsset('butterfly.png');
-        graphics.image(butterfly, 168, p.windowHeight / 2 + 200, 150, 100);
+        addFlowers(p, graphics, rand, colours, input);
+        addButterflies(p, graphics, rand, colours, input, assetManager);
         return graphics;
     }
     /*
@@ -4439,13 +4516,6 @@
         return graphics;
     }
 
-    // https://github.com/processing/p5.js/issues/2841
-    function graphicsToImage(p, graphics) {
-        const img = p.createImage(graphics.width, graphics.height);
-        img.copy(graphics, 0, 0, graphics.width, graphics.height, 0, 0, graphics.width, graphics.height);
-        return img;
-    }
-
     function flipVertical(p, graphics) {
         const g = p.createGraphics(graphics.width, graphics.height);
         g.scale(1, -1);
@@ -4490,15 +4560,22 @@
                 name: 'Pride Art Generator',
             });
             input = {
+                butterflies: true,
+                flowers: true,
                 name: 'Name',
                 flag: 'pride',
+                segments: 5,
+                variant: 0,
             };
             gui.add(input, 'name');
             gui.add(input, 'flag', Object.keys(prideColours));
+            gui.add(input, 'segments', 2, 10, 1);
+            gui.add(input, 'variant', 0, 10, 1);
+            gui.add(input, 'flowers');
+            gui.add(input, 'butterflies');
             gui.show();
             p.createCanvas(p.windowWidth, p.windowHeight);
             assetManager = new AssetManager(p);
-            yield assetManager.fetchAsset('butterfly.png');
             yield assetManager.fetchAsset('butterflywhite.png');
             loading = false;
         });
@@ -4513,19 +4590,15 @@
                 p.text('Loading...', p.width / 2, p.height / 2);
             }
             else {
-                // 40 Hexadecimal characters
-                // const nameHash: string[] = [...objectHash(input.name)];
-                const n = 4;
+                const n = input.segments;
                 const mask = drawMask(p, 0, (Math.PI) / n);
                 const flippedMask = drawMask(p, -(Math.PI) / n, 0);
-                const background = drawSlice(p, assetManager, input, n);
+                const background = drawSlice(p, assetManager, input);
                 const flippedBackground = flipVertical(p, background);
                 const bgImg = graphicsToImage(p, background);
                 const flippedBgImage = graphicsToImage(p, flippedBackground);
                 const maskImg = graphicsToImage(p, mask);
                 const flippedMaskImg = graphicsToImage(p, flippedMask);
-                // p.image(maskImg, 0, 0);
-                // p.image(bgImg, 0, 0);
                 p.translate(p.windowWidth / 2, p.windowHeight / 2);
                 bgImg.mask(maskImg);
                 flippedBgImage.mask(flippedMaskImg);
