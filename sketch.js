@@ -4443,11 +4443,11 @@
                 solidColourGraphics.remove();
                 solidColourImage.mask(butterflyImage);
                 graphics.imageMode(p.CENTER);
-                graphics.translate(50 + point[0], 50 + point[1]);
+                graphics.translate(75 + point[0], 50 + point[1]);
                 graphics.rotate(butterflyRotation);
-                graphics.image(solidColourImage, 0, 0, 100, 100);
+                graphics.image(solidColourImage, 0, 0, 150, 100);
                 graphics.rotate(-butterflyRotation);
-                graphics.translate(-(50 + point[0]), -(50 + point[1]));
+                graphics.translate(-(75 + point[0]), -(50 + point[1]));
             }
         }
     }
