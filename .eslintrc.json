@@ -25,7 +25,8 @@
                 "@typescript-eslint"
             ],
             "rules": {
-                "no-console": "off"
+                "no-console": "off",
+                "import/no-cycle": "off"
             }
         }
     ]

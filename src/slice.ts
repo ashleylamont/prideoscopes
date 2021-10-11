@@ -5,16 +5,11 @@ import AssetManager from './assetManager';
 import prideColours from './prideColours';
 import 'p5/src/math/random';
 import addFlowers from './addFlowers';
-import addButterflies from './addButterflies';
+import addImages from './addImages';
+import { InputParams } from './sketch';
 
 export default function drawSlice(p: P5, assetManager: AssetManager,
-  input: {
-    name: string,
-    flag: string,
-    segments: number,
-    variant: number,
-    flowers: boolean,
-    butterflies: boolean }): P5.Graphics {
+  input: InputParams): P5.Graphics {
   // @ts-ignore
   const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
   graphics.noStroke();
@@ -25,7 +20,9 @@ export default function drawSlice(p: P5, assetManager: AssetManager,
   const colours: string[] = prideColours[input.flag];
 
   addFlowers(p, graphics, rand, colours, input);
-  addButterflies(p, graphics, rand, colours, input, assetManager);
+  addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150, 100, input.butterflies, 2);
+  addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75, 150, input.diamonds, 3);
+  addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100, 75, input.hearts, 3);
 
   return graphics;
 }

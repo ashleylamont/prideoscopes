@@ -7,6 +7,18 @@ import flipVertical from './flipVertical';
 import AssetManager from './assetManager';
 import prideColours from './prideColours';
 
+export interface InputParams {
+  name: string;
+  flag: string;
+  segments: number;
+  variant: number;
+  flowers: boolean;
+  butterflies: boolean;
+  hearts: boolean;
+  diamonds: boolean;
+  backgroundColor: string;
+}
+
 if (window.localStorage.getItem('instructions') === null) {
   // Any needed instructions can go here.
   window.localStorage.setItem('instructions', 'done');
@@ -18,15 +30,7 @@ const sketch = (p: P5) => {
   let gui: GUI;
   let loading: boolean = true;
   let assetManager: AssetManager;
-  let input: {
-    name: string,
-    flag: string,
-    segments: number,
-    variant: number,
-    flowers: boolean,
-    butterflies: boolean,
-    backgroundColor: string,
-  };
+  let input: InputParams;
   // eslint-disable-next-line no-param-reassign
   p.setup = async () => {
     gui = new dat.GUI({
@@ -41,6 +45,8 @@ const sketch = (p: P5) => {
       segments: 5,
       variant: 0,
       backgroundColor: '#323232',
+      diamonds: true,
+      hearts: true,
     };
 
     gui.add(input, 'name');
@@ -49,13 +55,19 @@ const sketch = (p: P5) => {
     gui.add(input, 'variant', 0, 10, 1);
     gui.add(input, 'flowers');
     gui.add(input, 'butterflies');
+    gui.add(input, 'diamonds');
+    gui.add(input, 'hearts');
     gui.addColor(input, 'backgroundColor');
     gui.show();
 
     p.createCanvas(p.windowWidth, p.windowHeight);
 
     assetManager = new AssetManager(p);
-    await assetManager.fetchAsset('butterflywhite.png');
+    await Promise.all([
+      assetManager.fetchAsset('butterflywhite.png'),
+      assetManager.fetchAsset('diamondwhite.png'),
+      assetManager.fetchAsset('heartwhite.png'),
+    ]);
     loading = false;
   };
 

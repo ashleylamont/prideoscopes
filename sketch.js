@@ -4414,7 +4414,7 @@
         return img;
     }
 
-    function addButterflies(p, graphics, rand, colours, input, assetManager) {
+    function addImages(p, graphics, rand, colours, input, assetManager, imagePath, width, height, draw, qty) {
         const triangleSize = 0.5 * p.windowHeight;
         const triangleCx = 0;
         const triangleCy = p.windowHeight / 2;
@@ -4425,29 +4425,29 @@
             [triangleCx + Math.cos((Math.PI) / input.segments) * triangleSize,
                 triangleCy + Math.sin((Math.PI) / input.segments) * triangleSize],
         ];
-        for (let i = 0; i < 2; i += 1) {
+        for (let i = 0; i < qty; i += 1) {
             const point = [0, 0];
             do {
                 // Just spam random points until we intersect the triangle.
                 point[0] = rand.float(0, p.windowWidth);
                 point[1] = rand.float(0, p.windowHeight);
             } while (!pointInPolygon(point, slicePolygon));
-            const butterflyImage = assetManager.getAsset('butterflywhite.png');
+            const image = assetManager.getAsset(imagePath);
             const colour = colours[rand.int(0, colours.length - 1)];
-            const butterflyRotation = rand.float(0, Math.PI * 2);
-            if (input.butterflies) {
-                const solidColourGraphics = p.createGraphics(butterflyImage.width, butterflyImage.height);
+            const rotation = rand.float(0, Math.PI * 2);
+            if (draw) {
+                const solidColourGraphics = p.createGraphics(image.width, image.height);
                 solidColourGraphics.background(colour);
                 const solidColourImage = graphicsToImage(p, solidColourGraphics);
                 // GC hates me and it hates canvases.
                 solidColourGraphics.remove();
-                solidColourImage.mask(butterflyImage);
+                solidColourImage.mask(image);
                 graphics.imageMode(p.CENTER);
-                graphics.translate(75 + point[0], 50 + point[1]);
-                graphics.rotate(butterflyRotation);
-                graphics.image(solidColourImage, 0, 0, 150, 100);
-                graphics.rotate(-butterflyRotation);
-                graphics.translate(-(75 + point[0]), -(50 + point[1]));
+                graphics.translate(width / 2 + point[0], height / 2 + point[1]);
+                graphics.rotate(rotation);
+                graphics.image(solidColourImage, 0, 0, width, height);
+                graphics.rotate(-rotation);
+                graphics.translate(-(width / 2 + point[0]), -(height / 2 + point[1]));
             }
         }
     }
@@ -4462,7 +4462,9 @@
         rand.use(seedrandom(input.name + input.variant));
         const colours = prideColours[input.flag];
         addFlowers(p, graphics, rand, colours, input);
-        addButterflies(p, graphics, rand, colours, input, assetManager);
+        addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150, 100, input.butterflies, 2);
+        addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75, 150, input.diamonds, 3);
+        addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100, 75, input.hearts, 3);
         return graphics;
     }
     /*
@@ -4567,6 +4569,8 @@
                 segments: 5,
                 variant: 0,
                 backgroundColor: '#323232',
+                diamonds: true,
+                hearts: true,
             };
             gui.add(input, 'name');
             gui.add(input, 'flag', Object.keys(prideColours));
@@ -4574,11 +4578,17 @@
             gui.add(input, 'variant', 0, 10, 1);
             gui.add(input, 'flowers');
             gui.add(input, 'butterflies');
+            gui.add(input, 'diamonds');
+            gui.add(input, 'hearts');
             gui.addColor(input, 'backgroundColor');
             gui.show();
             p.createCanvas(p.windowWidth, p.windowHeight);
             assetManager = new AssetManager(p);
-            yield assetManager.fetchAsset('butterflywhite.png');
+            yield Promise.all([
+                assetManager.fetchAsset('butterflywhite.png'),
+                assetManager.fetchAsset('diamondwhite.png'),
+                assetManager.fetchAsset('heartwhite.png'),
+            ]);
             loading = false;
         });
         // eslint-disable-next-line no-param-reassign

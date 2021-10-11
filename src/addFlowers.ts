@@ -2,17 +2,11 @@ import P5 from 'p5';
 import { pointInPolygon } from 'geometric';
 import { Random } from 'random';
 import flower from './flower';
+import { InputParams } from './sketch';
 
 export default function addFlowers(
   p: P5, graphics: P5.Graphics, rand: Random, colours: string[],
-  input: {
-    name: string,
-    flag: string,
-    segments: number,
-    variant: number,
-    flowers: boolean,
-    butterflies: boolean
-  },
+  input: InputParams,
 ): void {
   const fSize = 1000;
 
