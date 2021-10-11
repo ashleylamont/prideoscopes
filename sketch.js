@@ -4566,6 +4566,7 @@
                 flag: 'pride',
                 segments: 5,
                 variant: 0,
+                backgroundColor: '#323232',
             };
             gui.add(input, 'name');
             gui.add(input, 'flag', Object.keys(prideColours));
@@ -4573,6 +4574,7 @@
             gui.add(input, 'variant', 0, 10, 1);
             gui.add(input, 'flowers');
             gui.add(input, 'butterflies');
+            gui.addColor(input, 'backgroundColor');
             gui.show();
             p.createCanvas(p.windowWidth, p.windowHeight);
             assetManager = new AssetManager(p);
@@ -4583,7 +4585,7 @@
         p.draw = () => {
             p.frameRate(1);
             p.clear();
-            p.background(50);
+            p.background(input.backgroundColor);
             if (loading) {
                 p.textAlign(p.CENTER, p.CENTER);
                 p.fill('#FFFFFF');

@@ -24,7 +24,8 @@ const sketch = (p: P5) => {
     segments: number,
     variant: number,
     flowers: boolean,
-    butterflies: boolean
+    butterflies: boolean,
+    backgroundColor: string,
   };
   // eslint-disable-next-line no-param-reassign
   p.setup = async () => {
@@ -39,6 +40,7 @@ const sketch = (p: P5) => {
       flag: 'pride',
       segments: 5,
       variant: 0,
+      backgroundColor: '#323232',
     };
 
     gui.add(input, 'name');
@@ -47,6 +49,7 @@ const sketch = (p: P5) => {
     gui.add(input, 'variant', 0, 10, 1);
     gui.add(input, 'flowers');
     gui.add(input, 'butterflies');
+    gui.addColor(input, 'backgroundColor');
     gui.show();
 
     p.createCanvas(p.windowWidth, p.windowHeight);
@@ -60,7 +63,7 @@ const sketch = (p: P5) => {
   p.draw = () => {
     p.frameRate(1);
     p.clear();
-    p.background(50);
+    p.background(input.backgroundColor);
     if (loading) {
       p.textAlign(p.CENTER, p.CENTER);
       p.fill('#FFFFFF');
