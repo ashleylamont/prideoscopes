@@ -35,7 +35,9 @@ export default function addImages(
     const rotation = rand.float(0, Math.PI * 2);
     if (draw) {
       const solidColourGraphics = p.createGraphics(image.width, image.height);
-      solidColourGraphics.background(colour);
+      const pColour = p.color(colour);
+      pColour.setAlpha(180);
+      solidColourGraphics.background(pColour);
       const solidColourImage = graphicsToImage(p, solidColourGraphics);
       // GC hates me and it hates canvases.
       solidColourGraphics.remove();

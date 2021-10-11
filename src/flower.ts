@@ -44,7 +44,9 @@ export default function flower(
     graphics.push();
     graphics.noStroke();
     // @ts-ignore
-    graphics.fill(myCol);
+    const colour = p.color(myCol);
+    colour.setAlpha(180);
+    graphics.fill(colour);
     graphics.angleMode(p.DEGREES);
     const rAngle = (360 / num);
 
@@ -56,7 +58,9 @@ export default function flower(
     graphics.push();
     graphics.noStroke();
     // @ts-ignore
-    graphics.fill(c.at(0));
+    const alternateColour = p.color(c.at(0));
+    alternateColour.setAlpha(180);
+    graphics.fill(alternateColour);
     switch (stamenType) {
       // circle stamen
       case 0:

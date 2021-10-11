@@ -4343,7 +4343,9 @@
             graphics.push();
             graphics.noStroke();
             // @ts-ignore
-            graphics.fill(myCol);
+            const colour = p.color(myCol);
+            colour.setAlpha(180);
+            graphics.fill(colour);
             graphics.angleMode(p.DEGREES);
             const rAngle = (360 / num);
             for (let i = 0; i < num; i += 1) {
@@ -4354,7 +4356,9 @@
             graphics.push();
             graphics.noStroke();
             // @ts-ignore
-            graphics.fill(c.at(0));
+            const alternateColour = p.color(c.at(0));
+            alternateColour.setAlpha(180);
+            graphics.fill(alternateColour);
             switch (stamenType) {
                 // circle stamen
                 case 0:
@@ -4437,7 +4441,9 @@
             const rotation = rand.float(0, Math.PI * 2);
             if (draw) {
                 const solidColourGraphics = p.createGraphics(image.width, image.height);
-                solidColourGraphics.background(colour);
+                const pColour = p.color(colour);
+                pColour.setAlpha(180);
+                solidColourGraphics.background(pColour);
                 const solidColourImage = graphicsToImage(p, solidColourGraphics);
                 // GC hates me and it hates canvases.
                 solidColourGraphics.remove();
