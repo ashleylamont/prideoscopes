@@ -1,6 +1,5 @@
 import P5 from 'p5';
 import dat, { GUI } from 'dat.gui';
-import { debounce } from 'lodash';
 import AssetManager from './assetManager';
 import prideColours from './prideColours';
 import draw from './draw';
@@ -15,6 +14,9 @@ export interface InputParams {
   hearts: boolean;
   diamonds: boolean;
   backgroundColor: string;
+  randomVariant: number;
+  randomise: ()=>void;
+  draw: ()=>void;
 }
 
 if (window.localStorage.getItem('instructions') === null) {
@@ -41,22 +43,25 @@ const sketch = (p: P5) => {
       flag: 'pride',
       segments: 5,
       variant: 0,
+      randomVariant: 0,
+      randomise: () => {},
       backgroundColor: '#323232',
       diamonds: true,
       hearts: true,
+      draw: () => {},
     };
 
-    const controllers: dat.GUIController[] = [];
-
-    controllers.push(gui.add(input, 'name'));
-    controllers.push(gui.add(input, 'flag', Object.keys(prideColours)));
-    controllers.push(gui.add(input, 'segments', 2, 10, 1));
-    controllers.push(gui.add(input, 'variant', 0, 10, 1));
-    controllers.push(gui.add(input, 'flowers'));
-    controllers.push(gui.add(input, 'butterflies'));
-    controllers.push(gui.add(input, 'diamonds'));
-    controllers.push(gui.add(input, 'hearts'));
+    gui.add(input, 'name');
+    gui.add(input, 'flag', Object.keys(prideColours));
+    gui.add(input, 'segments', 2, 10, 1);
+    gui.add(input, 'variant', 0, 10, 1);
+    gui.add(input, 'flowers');
+    gui.add(input, 'butterflies');
+    gui.add(input, 'diamonds');
+    gui.add(input, 'hearts');
     gui.addColor(input, 'backgroundColor');
+    gui.add(input, 'randomise');
+    gui.add(input, 'draw');
     gui.show();
 
     canvas = p.createGraphics(p.windowWidth, p.windowHeight);
@@ -71,16 +76,13 @@ const sketch = (p: P5) => {
     ]);
     loading = false;
 
-    function redrawCanvas() {
-      draw(input, p, assetManager, canvas);
-    }
+    input.draw = () => draw(input, p, assetManager, canvas);
+    input.randomise = () => {
+      input.randomVariant = Math.random();
+      input.draw();
+    };
 
-    const debounced = debounce(redrawCanvas, 500);
-
-    controllers.forEach((controller) => {
-      controller.onChange(debounced);
-    });
-    redrawCanvas();
+    input.draw();
   };
 
   // eslint-disable-next-line no-param-reassign

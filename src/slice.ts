@@ -16,7 +16,7 @@ export default function drawSlice(p: P5, assetManager: AssetManager,
   // @ts-ignore
   const rand = random;
   // @ts-ignore
-  rand.use(seedrandom(input.name + input.variant));
+  rand.use(seedrandom(input.name + input.variant + input.randomVariant));
   const colours: string[] = prideColours[input.flag];
 
   addFlowers(p, graphics, rand, colours, input);
