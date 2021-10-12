@@ -4605,7 +4605,7 @@
                 variant: 0,
                 randomVariant: 0,
                 randomise: () => { },
-                backgroundColor: '#323232',
+                backgroundColor: '#FFFFFF',
                 diamonds: true,
                 number_diamonds: 2,
                 hearts: true,
