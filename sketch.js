@@ -4500,9 +4500,9 @@
         rand.use(seedrandom(input.name + input.variant + input.randomVariant));
         const colours = prideColours[input.flag];
         addFlowers(p, graphics, rand, colours, input);
-        addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150, 100, input.butterflies, 2);
-        addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75, 150, input.diamonds, 3);
-        addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100, 75, input.hearts, 3);
+        addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150, 100, input.butterflies, input.number_butterflies);
+        addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75, 150, input.diamonds, input.number_diamonds);
+        addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100, 75, input.hearts, input.number_hearts);
         return graphics;
     }
     /*
@@ -4597,6 +4597,7 @@
             });
             input = {
                 butterflies: true,
+                number_butterflies: 2,
                 flowers: true,
                 name: 'Name',
                 flag: 'pride',
@@ -4606,7 +4607,9 @@
                 randomise: () => { },
                 backgroundColor: '#323232',
                 diamonds: true,
+                number_diamonds: 2,
                 hearts: true,
+                number_hearts: 3,
                 draw: () => { },
             };
             gui.add(input, 'name');
@@ -4615,8 +4618,11 @@
             gui.add(input, 'variant', 0, 10, 1);
             gui.add(input, 'flowers');
             gui.add(input, 'butterflies');
+            gui.add(input, 'number_butterflies', 1, 10, 1);
             gui.add(input, 'diamonds');
+            gui.add(input, 'number_diamonds', 1, 10, 1);
             gui.add(input, 'hearts');
+            gui.add(input, 'number_hearts', 1, 10, 1);
             gui.addColor(input, 'backgroundColor');
             gui.add(input, 'randomise');
             gui.add(input, 'draw');

@@ -11,8 +11,11 @@ export interface InputParams {
   variant: number;
   flowers: boolean;
   butterflies: boolean;
+  number_butterflies: number;
   hearts: boolean;
+  number_hearts: number;
   diamonds: boolean;
+  number_diamonds: number;
   backgroundColor: string;
   randomVariant: number;
   randomise: ()=>void;
@@ -38,6 +41,7 @@ const sketch = (p: P5) => {
 
     input = {
       butterflies: true,
+      number_butterflies: 2,
       flowers: true,
       name: 'Name',
       flag: 'pride',
@@ -47,7 +51,9 @@ const sketch = (p: P5) => {
       randomise: () => {},
       backgroundColor: '#323232',
       diamonds: true,
+      number_diamonds: 2,
       hearts: true,
+      number_hearts: 3,
       draw: () => {},
     };
 
@@ -57,8 +63,11 @@ const sketch = (p: P5) => {
     gui.add(input, 'variant', 0, 10, 1);
     gui.add(input, 'flowers');
     gui.add(input, 'butterflies');
+    gui.add(input, 'number_butterflies', 1, 10, 1);
     gui.add(input, 'diamonds');
+    gui.add(input, 'number_diamonds', 1, 10, 1);
     gui.add(input, 'hearts');
+    gui.add(input, 'number_hearts', 1, 10, 1);
     gui.addColor(input, 'backgroundColor');
     gui.add(input, 'randomise');
     gui.add(input, 'draw');
