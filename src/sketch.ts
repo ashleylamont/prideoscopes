@@ -98,7 +98,11 @@ const sketch = (p: P5) => {
   p.draw = () => {
     p.frameRate(1);
     p.clear();
-    p.background(input.backgroundColor);
+    // p.background(220);
+    // gutter circle
+    p.fill('#FFFFFF');
+    p.noStroke();
+    p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
     if (loading) {
       p.textAlign(p.CENTER, p.CENTER);
       p.fill('#FFFFFF');

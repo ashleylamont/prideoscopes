@@ -4498,6 +4498,8 @@
         const rand = random;
         // @ts-ignore
         rand.use(seedrandom(input.name + input.variant + input.randomVariant));
+        // drawing the background on the slice rather than the main drawing
+        graphics.background(input.backgroundColor);
         const colours = prideColours[input.flag];
         addFlowers(p, graphics, rand, colours, input);
         addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150, 100, input.butterflies, input.number_butterflies);
@@ -4647,7 +4649,11 @@
         p.draw = () => {
             p.frameRate(1);
             p.clear();
-            p.background(input.backgroundColor);
+            // p.background(220);
+            // gutter circle
+            p.fill('#FFFFFF');
+            p.noStroke();
+            p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
             if (loading) {
                 p.textAlign(p.CENTER, p.CENTER);
                 p.fill('#FFFFFF');
