@@ -4428,7 +4428,7 @@
             [triangleCx + Math.cos((Math.PI) / input.segments) * triangleSize,
                 triangleCy + Math.sin((Math.PI) / input.segments) * triangleSize],
         ];
-        for (let i = 0; i < 6; i += 1) {
+        for (let i = 0; i < input.number_flowers; i += 1) {
             const point = [0, 0];
             do {
                 // Just spam random points until we intersect the triangle.
@@ -4499,7 +4499,8 @@
         // @ts-ignore
         rand.use(seedrandom(input.name + input.variant + input.randomVariant));
         // drawing the background on the slice rather than the main drawing
-        graphics.background(input.backgroundColor);
+        // graphics.background(input.backgroundColor);
+        // or maybe, not doing that
         const colours = prideColours[input.flag];
         addFlowers(p, graphics, rand, colours, input);
         addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150, 100, input.butterflies, input.number_butterflies);
@@ -4601,6 +4602,7 @@
                 butterflies: true,
                 number_butterflies: 2,
                 flowers: true,
+                number_flowers: 6,
                 name: 'Name',
                 flag: 'pride',
                 segments: 5,
@@ -4619,6 +4621,7 @@
             gui.add(input, 'segments', 2, 10, 1);
             gui.add(input, 'variant', 0, 10, 1);
             gui.add(input, 'flowers');
+            gui.add(input, 'number_flowers', 1, 15, 1);
             gui.add(input, 'butterflies');
             gui.add(input, 'number_butterflies', 1, 10, 1);
             gui.add(input, 'diamonds');
@@ -4650,10 +4653,28 @@
             p.frameRate(1);
             p.clear();
             // p.background(220);
-            // gutter circle
-            p.fill('#FFFFFF');
             p.noStroke();
-            p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
+            // gutter circle
+            // p.fill('#FFFFFF');
+            // p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
+            p.fill(input.backgroundColor);
+            // background polygon
+            function drawPolygon(num, x, y, d) {
+                p.beginShape();
+                for (let i = 0; i < num + 1; i += 1) {
+                    const angle = (p.TWO_PI / num) * i;
+                    const px = x + (p.sin(angle) * d) / 2;
+                    const py = y - (p.cos(angle) * d) / 2;
+                    p.vertex(px, py, 0);
+                }
+                p.endShape();
+            }
+            p.push();
+            p.translate(p.windowWidth / 2, p.windowHeight / 2);
+            // calling angle mode breaks the program for some reason, so this is 90 degrees in radians
+            p.rotate(1.5708);
+            drawPolygon(input.segments * 2, 0, 0, p.windowHeight);
+            p.pop();
             if (loading) {
                 p.textAlign(p.CENTER, p.CENTER);
                 p.fill('#FFFFFF');

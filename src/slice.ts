@@ -19,7 +19,8 @@ export default function drawSlice(p: P5, assetManager: AssetManager,
   rand.use(seedrandom(input.name + input.variant + input.randomVariant));
 
   // drawing the background on the slice rather than the main drawing
-  graphics.background(input.backgroundColor);
+  // graphics.background(input.backgroundColor);
+  // or maybe, not doing that
 
   const colours: string[] = prideColours[input.flag];
 
