@@ -7,10 +7,13 @@ export default function flower(
   p: p5, c: String[], x: number, y: number, width: number, height: number,
   rand: Random, scale: number,
 ): p5.Graphics {
+  // TODO Make scale somehow affect the resultant size of flowers
+  //  (without affecting randomness or anything)
+  //  Like how it's done in addImages
   const graphics = p.createGraphics(width, height);
   graphics.noStroke();
   const sType = rand.integer(0, 1);
-  let radii = rand.float(50, 300) * scale;
+  let radii = rand.float(50, 300);
   const w = rand.float(10, 20);
   const myRot = rand.float(0, 360);
   graphics.push();
