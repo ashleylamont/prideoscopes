@@ -14,6 +14,7 @@ export interface InputParams {
   hearts: number;
   diamonds: number;
   backgroundColor: string;
+  transparentBg: boolean;
   seed: string;
   randomise: ()=>void;
   draw: ()=>void;
@@ -48,6 +49,7 @@ const sketch = (p: P5) => {
       flowers: 4,
       diamonds: 4,
       hearts: 4,
+      transparentBg: true,
       draw: () => {},
       save: () => {},
     };
@@ -61,6 +63,7 @@ const sketch = (p: P5) => {
     gui.add(input, 'diamonds', 0, 10, 1);
     gui.add(input, 'hearts', 0, 10, 1);
     gui.addColor(input, 'backgroundColor');
+    gui.add(input, 'transparentBg');
     gui.add(input, 'randomise');
     gui.add(input, 'draw');
     gui.add(input, 'save');

@@ -20,7 +20,7 @@ export default function addFlowers(
       triangleCy + Math.sin((Math.PI) / input.segments) * triangleSize],
   ];
 
-  for (let i = 0; i < input.number_flowers; i += 1) {
+  for (let i = 0; i < 10; i += 1) {
     const point: [number, number] = [0, 0];
     do {
       // Just spam random points until we intersect the triangle.
@@ -29,7 +29,7 @@ export default function addFlowers(
     } while (!pointInPolygon(point, slicePolygon));
     const f = flower(p, colours, ...point, graphics.width, graphics.height, rand);
     // Generate the flower regardless to not affect random number generation.
-    if (input.flowers) graphics.image(f, 0, 0);
+    if (i < input.flowers) graphics.image(f, 0, 0);
     f.remove();
   }
 }

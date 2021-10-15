@@ -4427,7 +4427,7 @@
             [triangleCx + Math.cos((Math.PI) / input.segments) * triangleSize,
                 triangleCy + Math.sin((Math.PI) / input.segments) * triangleSize],
         ];
-        for (let i = 0; i < input.number_flowers; i += 1) {
+        for (let i = 0; i < 10; i += 1) {
             const point = [0, 0];
             do {
                 // Just spam random points until we intersect the triangle.
@@ -4436,7 +4436,7 @@
             } while (!pointInPolygon(point, slicePolygon));
             const f = flower(p, colours, ...point, graphics.width, graphics.height, rand);
             // Generate the flower regardless to not affect random number generation.
-            if (input.flowers)
+            if (i < input.flowers)
                 graphics.image(f, 0, 0);
             f.remove();
         }
@@ -4504,44 +4504,6 @@
         addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100, 75, input.hearts);
         return graphics;
     }
-    /*
-
-    export default function drawSlice(
-      p: P5, assetManager: AssetManager, input: { name: string, flag: string },
-    ): P5.Graphics {
-      // @ts-ignore
-      // random.use(seedrandom(input.name));
-      Math.seedrandom(input.name);
-      const graphics = p.createGraphics(width, height);
-      graphics.noStroke();
-
-      const colours: string[] = prideColours[input.flag];
-      // const pride = [
-      //   '#FF1E26',
-      //   '#FE941E',
-      //   '#FFFF00',
-      //   '#06BF00',
-      //   '#001A96',
-      //   '#760088',
-      // ];
-
-      for (let i = 0; i < 5; i += 1) {
-        // graphics.fill(p.random(colours));
-        // flower(p, pride, p.random(0, width), p.random(0, height),
-        //   p.random(50, 200), p.random(50, 200));
-        const f = flower(p, colours, randomRange(0, width), randomRange(0, height),
-          randomRange(50, 200), randomRange(50, 200));
-        graphics.image(f, randomRange(0, graphics.width), randomRange(0, graphics.height));
-        f.remove();
-        // graphics.circle(p.random(0, width), p.random(0, height), p.random(50, 200));
-      }
-
-      const butterfly = assetManager.getAsset('butterfly.png');
-      graphics.image(butterfly, 168, height / 2 + 200, 150, 100);
-
-      return graphics;
-    }
-    */
 
     function flipVertical(p, graphics) {
         const g = p.createGraphics(graphics.width, graphics.height);
@@ -4556,6 +4518,31 @@
         const n = input.segments;
         const mask = drawMask(p, 0, (Math.PI) / n, graphics.width, graphics.height);
         const flippedMask = drawMask(p, -(Math.PI) / n, 0, graphics.width, graphics.height);
+        // background polygon
+        function drawPolygon(num, x, y, d) {
+            graphics.beginShape();
+            for (let i = 0; i < num + 1; i += 1) {
+                const angle = (p.TWO_PI / num) * i;
+                const px = x + (p.sin(angle) * d) / 2;
+                const py = y - (p.cos(angle) * d) / 2;
+                graphics.vertex(px, py, 0);
+            }
+            graphics.endShape();
+        }
+        if (!input.transparentBg) {
+            // p.background(220);
+            graphics.noStroke();
+            // gutter circle
+            // p.fill('#FFFFFF');
+            // p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
+            graphics.fill(input.backgroundColor);
+            graphics.push();
+            graphics.translate(graphics.width / 2, graphics.height / 2);
+            // calling angle mode breaks the program for some reason, so this is 90 degrees in radians
+            graphics.rotate(1.5708);
+            drawPolygon(input.segments * 2, 0, 0, graphics.height);
+            graphics.pop();
+        }
         const background = drawSlice(p, assetManager, input, graphics.width, graphics.height);
         const flippedBackground = flipVertical(p, background);
         const bgImg = graphicsToImage(p, background);
@@ -4605,6 +4592,7 @@
                 flowers: 4,
                 diamonds: 4,
                 hearts: 4,
+                transparentBg: true,
                 draw: () => { },
                 save: () => { },
             };
@@ -4617,6 +4605,7 @@
             gui.add(input, 'diamonds', 0, 10, 1);
             gui.add(input, 'hearts', 0, 10, 1);
             gui.addColor(input, 'backgroundColor');
+            gui.add(input, 'transparentBg');
             gui.add(input, 'randomise');
             gui.add(input, 'draw');
             gui.add(input, 'save');

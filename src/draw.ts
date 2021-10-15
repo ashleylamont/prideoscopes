@@ -28,6 +28,36 @@ export default function draw(
     graphics.width,
     graphics.height,
   );
+
+  // background polygon
+  function drawPolygon(num, x, y, d) {
+    graphics.beginShape();
+    for (let i = 0; i < num + 1; i += 1) {
+      const angle = (p.TWO_PI / num) * i;
+      const px = x + (p.sin(angle) * d) / 2;
+      const py = y - (p.cos(angle) * d) / 2;
+      graphics.vertex(px, py, 0);
+    }
+    graphics.endShape();
+  }
+
+  if (!input.transparentBg) {
+    // p.background(220);
+    graphics.noStroke();
+    // gutter circle
+    // p.fill('#FFFFFF');
+    // p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
+
+    graphics.fill(input.backgroundColor);
+
+    graphics.push();
+    graphics.translate(graphics.width / 2, graphics.height / 2);
+    // calling angle mode breaks the program for some reason, so this is 90 degrees in radians
+    graphics.rotate(1.5708);
+    drawPolygon(input.segments * 2, 0, 0, graphics.height);
+    graphics.pop();
+  }
+
   const background = drawSlice(p, assetManager, input, graphics.width, graphics.height);
   const flippedBackground = flipVertical(p, background);
   const bgImg = graphicsToImage(p, background);
@@ -35,6 +65,7 @@ export default function draw(
   const maskImg = graphicsToImage(p, mask);
   const flippedMaskImg = graphicsToImage(p, flippedMask);
   graphics.translate(graphics.width / 2, graphics.height / 2);
+
   bgImg.mask(maskImg);
   flippedBgImage.mask(flippedMaskImg);
   for (let i = 0; i < n; i += 1) {
