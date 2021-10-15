@@ -4337,11 +4337,11 @@
     // x, y : locations
     // c : array of colours
     // should probably make this export a flower graphics object
-    function flower(p, c, x, y, width, height, rand) {
+    function flower(p, c, x, y, width, height, rand, scale) {
         const graphics = p.createGraphics(width, height);
         graphics.noStroke();
         const sType = rand.integer(0, 1);
-        let radii = rand.float(50, 300);
+        let radii = rand.float(50, 300) * scale;
         const w = rand.float(10, 20);
         const myRot = rand.float(0, 360);
         graphics.push();
@@ -4434,7 +4434,7 @@
                 point[0] = rand.float(0, graphics.width);
                 point[1] = rand.float(0, graphics.height);
             } while (!pointInPolygon(point, slicePolygon));
-            const f = flower(p, colours, ...point, graphics.width, graphics.height, rand);
+            const f = flower(p, colours, ...point, graphics.width, graphics.height, rand, input.flowerScale);
             // Generate the flower regardless to not affect random number generation.
             if (i < input.flowers)
                 graphics.image(f, 0, 0);
@@ -4499,9 +4499,9 @@
         rand.use(seedrandom(input.name + input.variant + input.seed));
         const colours = prideColours[input.flag];
         addFlowers(p, graphics, rand, colours, input);
-        addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150, 100, input.butterflies);
-        addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75, 150, input.diamonds);
-        addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100, 75, input.hearts);
+        addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150 * input.butterflyScale, 100 * input.butterflyScale, input.butterflies);
+        addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75 * input.diamondScale, 150 * input.diamondScale, input.diamonds);
+        addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100 * input.heartScale, 75 * input.heartScale, input.hearts);
         return graphics;
     }
 
@@ -4585,6 +4585,10 @@
                 name: 'Name',
                 flag: 'pride',
                 segments: 5,
+                flowerScale: 1.5,
+                butterflyScale: 1.5,
+                diamondScale: 1.5,
+                heartScale: 1.5,
                 seed: '',
                 randomise: () => { },
                 backgroundColor: '#323232',
@@ -4599,6 +4603,10 @@
             gui.add(input, 'name');
             gui.add(input, 'flag', Object.keys(prideColours));
             gui.add(input, 'segments', 2, 10, 1);
+            gui.add(input, 'flowerScale', 0.1, 5);
+            gui.add(input, 'butterflyScale', 0.1, 5);
+            gui.add(input, 'diamondScale', 0.1, 5);
+            gui.add(input, 'heartScale', 0.1, 5);
             gui.add(input, 'seed').listen();
             gui.add(input, 'flowers', 0, 10, 1);
             gui.add(input, 'butterflies', 0, 10, 1);

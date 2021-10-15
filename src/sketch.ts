@@ -9,6 +9,10 @@ export interface InputParams {
   name: string;
   flag: string;
   segments: number;
+  flowerScale: number;
+  butterflyScale: number;
+  diamondScale: number;
+  heartScale: number;
   flowers: number;
   butterflies: number;
   hearts: number;
@@ -42,6 +46,10 @@ const sketch = (p: P5) => {
       name: 'Name',
       flag: 'pride',
       segments: 5,
+      flowerScale: 1.5,
+      butterflyScale: 1.5,
+      diamondScale: 1.5,
+      heartScale: 1.5,
       seed: '',
       randomise: () => {},
       backgroundColor: '#323232',
@@ -57,6 +65,10 @@ const sketch = (p: P5) => {
     gui.add(input, 'name');
     gui.add(input, 'flag', Object.keys(prideColours));
     gui.add(input, 'segments', 2, 10, 1);
+    gui.add(input, 'flowerScale', 0.1, 5);
+    gui.add(input, 'butterflyScale', 0.1, 5);
+    gui.add(input, 'diamondScale', 0.1, 5);
+    gui.add(input, 'heartScale', 0.1, 5);
     gui.add(input, 'seed').listen();
     gui.add(input, 'flowers', 0, 10, 1);
     gui.add(input, 'butterflies', 0, 10, 1);

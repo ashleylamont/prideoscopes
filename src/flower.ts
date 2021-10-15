@@ -5,12 +5,12 @@ import p5 from 'p5';
 // should probably make this export a flower graphics object
 export default function flower(
   p: p5, c: String[], x: number, y: number, width: number, height: number,
-  rand: Random,
+  rand: Random, scale: number,
 ): p5.Graphics {
   const graphics = p.createGraphics(width, height);
   graphics.noStroke();
   const sType = rand.integer(0, 1);
-  let radii = rand.float(50, 300);
+  let radii = rand.float(50, 300) * scale;
   const w = rand.float(10, 20);
   const myRot = rand.float(0, 360);
   graphics.push();

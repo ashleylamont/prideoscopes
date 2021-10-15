@@ -27,7 +27,9 @@ export default function addFlowers(
       point[0] = rand.float(0, graphics.width);
       point[1] = rand.float(0, graphics.height);
     } while (!pointInPolygon(point, slicePolygon));
-    const f = flower(p, colours, ...point, graphics.width, graphics.height, rand);
+    const f = flower(
+      p, colours, ...point, graphics.width, graphics.height, rand, input.flowerScale,
+    );
     // Generate the flower regardless to not affect random number generation.
     if (i < input.flowers) graphics.image(f, 0, 0);
     f.remove();

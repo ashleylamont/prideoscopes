@@ -20,9 +20,9 @@ export default function drawSlice(p: P5, assetManager: AssetManager,
   const colours: string[] = prideColours[input.flag];
 
   addFlowers(p, graphics, rand, colours, input);
-  addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150, 100, input.butterflies);
-  addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75, 150, input.diamonds);
-  addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100, 75, input.hearts);
+  addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150 * input.butterflyScale, 100 * input.butterflyScale, input.butterflies);
+  addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75 * input.diamondScale, 150 * input.diamondScale, input.diamonds);
+  addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100 * input.heartScale, 75 * input.heartScale, input.hearts);
 
   return graphics;
 }
