@@ -8,11 +8,9 @@ export default function addFlowers(
   p: P5, graphics: P5.Graphics, rand: Random, colours: string[],
   input: InputParams,
 ): void {
-  const fSize = 1000;
-
-  const triangleSize = 0.5 * p.windowHeight;
+  const triangleSize = 0.5 * graphics.height;
   const triangleCx = 0;
-  const triangleCy = p.windowHeight / 2;
+  const triangleCy = graphics.height / 2;
 
   const slicePolygon: [number, number][] = [
     [triangleCx, triangleCy],
@@ -26,10 +24,10 @@ export default function addFlowers(
     const point: [number, number] = [0, 0];
     do {
       // Just spam random points until we intersect the triangle.
-      point[0] = rand.float(0, p.windowWidth);
-      point[1] = rand.float(0, p.windowHeight);
+      point[0] = rand.float(0, graphics.width);
+      point[1] = rand.float(0, graphics.height);
     } while (!pointInPolygon(point, slicePolygon));
-    const f = flower(p, colours, ...point, fSize, fSize, rand);
+    const f = flower(p, colours, ...point, graphics.width, graphics.height, rand);
     // Generate the flower regardless to not affect random number generation.
     if (input.flowers) graphics.image(f, 0, 0);
     f.remove();

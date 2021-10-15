@@ -9,11 +9,11 @@ export default function addImages(
   p: P5, graphics: P5.Graphics, rand: Random, colours: string[],
   input: InputParams, assetManager: AssetManager,
   imagePath: string, width: number, height: number,
-  draw: boolean, qty: number,
+  draw: number,
 ): void {
-  const triangleSize = 0.5 * p.windowHeight;
+  const triangleSize = 0.5 * graphics.height;
   const triangleCx = 0;
-  const triangleCy = p.windowHeight / 2;
+  const triangleCy = graphics.height / 2;
 
   const slicePolygon: [number, number][] = [
     [triangleCx, triangleCy],
@@ -23,17 +23,17 @@ export default function addImages(
       triangleCy + Math.sin((Math.PI) / input.segments) * triangleSize],
   ];
 
-  for (let i = 0; i < qty; i += 1) {
+  for (let i = 0; i < draw; i += 1) {
     const point: [number, number] = [0, 0];
     do {
       // Just spam random points until we intersect the triangle.
-      point[0] = rand.float(0, p.windowWidth);
-      point[1] = rand.float(0, p.windowHeight);
+      point[0] = rand.float(0, graphics.width);
+      point[1] = rand.float(0, graphics.height);
     } while (!pointInPolygon(point, slicePolygon));
     const image = assetManager.getAsset(imagePath);
     const colour = colours[rand.int(0, colours.length - 1)];
     const rotation = rand.float(0, Math.PI * 2);
-    if (draw) {
+    if (i < draw) {
       const solidColourGraphics = p.createGraphics(image.width, image.height);
       const pColour = p.color(colour);
       pColour.setAlpha(180);

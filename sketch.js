@@ -2697,11 +2697,11 @@
         ],
     };
 
-    function drawMask(p, startAngle, endAngle) {
-        const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
-        const size = 0.5 * p.windowHeight;
+    function drawMask(p, startAngle, endAngle, width, height) {
+        const graphics = p.createGraphics(width, height);
+        const size = 0.5 * height;
         const cx = 0;
-        const cy = p.windowHeight / 2;
+        const cy = height / 2;
         graphics.noStroke();
         graphics.fill(0);
         graphics.triangle(cx, cy, cx + Math.cos(startAngle) * size, cy + Math.sin(startAngle) * size, cx + Math.cos(endAngle) * size, cy + Math.sin(endAngle) * size);
@@ -4417,10 +4417,9 @@
     }
 
     function addFlowers(p, graphics, rand, colours, input) {
-        const fSize = 1000;
-        const triangleSize = 0.5 * p.windowHeight;
+        const triangleSize = 0.5 * graphics.height;
         const triangleCx = 0;
-        const triangleCy = p.windowHeight / 2;
+        const triangleCy = graphics.height / 2;
         const slicePolygon = [
             [triangleCx, triangleCy],
             [triangleCx + Math.cos(0) * triangleSize,
@@ -4432,10 +4431,10 @@
             const point = [0, 0];
             do {
                 // Just spam random points until we intersect the triangle.
-                point[0] = rand.float(0, p.windowWidth);
-                point[1] = rand.float(0, p.windowHeight);
+                point[0] = rand.float(0, graphics.width);
+                point[1] = rand.float(0, graphics.height);
             } while (!pointInPolygon(point, slicePolygon));
-            const f = flower(p, colours, ...point, fSize, fSize, rand);
+            const f = flower(p, colours, ...point, graphics.width, graphics.height, rand);
             // Generate the flower regardless to not affect random number generation.
             if (input.flowers)
                 graphics.image(f, 0, 0);
@@ -4450,10 +4449,10 @@
         return img;
     }
 
-    function addImages(p, graphics, rand, colours, input, assetManager, imagePath, width, height, draw, qty) {
-        const triangleSize = 0.5 * p.windowHeight;
+    function addImages(p, graphics, rand, colours, input, assetManager, imagePath, width, height, draw) {
+        const triangleSize = 0.5 * graphics.height;
         const triangleCx = 0;
-        const triangleCy = p.windowHeight / 2;
+        const triangleCy = graphics.height / 2;
         const slicePolygon = [
             [triangleCx, triangleCy],
             [triangleCx + Math.cos(0) * triangleSize,
@@ -4461,17 +4460,17 @@
             [triangleCx + Math.cos((Math.PI) / input.segments) * triangleSize,
                 triangleCy + Math.sin((Math.PI) / input.segments) * triangleSize],
         ];
-        for (let i = 0; i < qty; i += 1) {
+        for (let i = 0; i < draw; i += 1) {
             const point = [0, 0];
             do {
                 // Just spam random points until we intersect the triangle.
-                point[0] = rand.float(0, p.windowWidth);
-                point[1] = rand.float(0, p.windowHeight);
+                point[0] = rand.float(0, graphics.width);
+                point[1] = rand.float(0, graphics.height);
             } while (!pointInPolygon(point, slicePolygon));
             const image = assetManager.getAsset(imagePath);
             const colour = colours[rand.int(0, colours.length - 1)];
             const rotation = rand.float(0, Math.PI * 2);
-            if (draw) {
+            if (i < draw) {
                 const solidColourGraphics = p.createGraphics(image.width, image.height);
                 const pColour = p.color(colour);
                 pColour.setAlpha(180);
@@ -4490,19 +4489,19 @@
         }
     }
 
-    function drawSlice(p, assetManager, input) {
+    function drawSlice(p, assetManager, input, width, height) {
         // @ts-ignore
-        const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
+        const graphics = p.createGraphics(width, height);
         graphics.noStroke();
         // @ts-ignore
         const rand = random;
         // @ts-ignore
-        rand.use(seedrandom(input.name + input.variant + input.randomVariant));
+        rand.use(seedrandom(input.name + input.variant + input.seed));
         const colours = prideColours[input.flag];
         addFlowers(p, graphics, rand, colours, input);
-        addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150, 100, input.butterflies, 2);
-        addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75, 150, input.diamonds, 3);
-        addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100, 75, input.hearts, 3);
+        addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150, 100, input.butterflies);
+        addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75, 150, input.diamonds);
+        addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100, 75, input.hearts);
         return graphics;
     }
     /*
@@ -4513,7 +4512,7 @@
       // @ts-ignore
       // random.use(seedrandom(input.name));
       Math.seedrandom(input.name);
-      const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
+      const graphics = p.createGraphics(width, height);
       graphics.noStroke();
 
       const colours: string[] = prideColours[input.flag];
@@ -4528,17 +4527,17 @@
 
       for (let i = 0; i < 5; i += 1) {
         // graphics.fill(p.random(colours));
-        // flower(p, pride, p.random(0, p.windowWidth), p.random(0, p.windowHeight),
+        // flower(p, pride, p.random(0, width), p.random(0, height),
         //   p.random(50, 200), p.random(50, 200));
-        const f = flower(p, colours, randomRange(0, p.windowWidth), randomRange(0, p.windowHeight),
+        const f = flower(p, colours, randomRange(0, width), randomRange(0, height),
           randomRange(50, 200), randomRange(50, 200));
         graphics.image(f, randomRange(0, graphics.width), randomRange(0, graphics.height));
         f.remove();
-        // graphics.circle(p.random(0, p.windowWidth), p.random(0, p.windowHeight), p.random(50, 200));
+        // graphics.circle(p.random(0, width), p.random(0, height), p.random(50, 200));
       }
 
       const butterfly = assetManager.getAsset('butterfly.png');
-      graphics.image(butterfly, 168, p.windowHeight / 2 + 200, 150, 100);
+      graphics.image(butterfly, 168, height / 2 + 200, 150, 100);
 
       return graphics;
     }
@@ -4555,25 +4554,25 @@
     function draw(input, p, assetManager, graphics) {
         graphics.clear();
         const n = input.segments;
-        const mask = drawMask(p, 0, (Math.PI) / n);
-        const flippedMask = drawMask(p, -(Math.PI) / n, 0);
-        const background = drawSlice(p, assetManager, input);
+        const mask = drawMask(p, 0, (Math.PI) / n, graphics.width, graphics.height);
+        const flippedMask = drawMask(p, -(Math.PI) / n, 0, graphics.width, graphics.height);
+        const background = drawSlice(p, assetManager, input, graphics.width, graphics.height);
         const flippedBackground = flipVertical(p, background);
         const bgImg = graphicsToImage(p, background);
         const flippedBgImage = graphicsToImage(p, flippedBackground);
         const maskImg = graphicsToImage(p, mask);
         const flippedMaskImg = graphicsToImage(p, flippedMask);
-        graphics.translate(p.windowWidth / 2, p.windowHeight / 2);
+        graphics.translate(graphics.width / 2, graphics.height / 2);
         bgImg.mask(maskImg);
         flippedBgImage.mask(flippedMaskImg);
         for (let i = 0; i < n; i += 1) {
-            graphics.translate(0, -p.windowHeight / 2);
+            graphics.translate(0, -graphics.height / 2);
             graphics.image(bgImg, 0, 0);
             graphics.image(flippedBgImage, 0, 0);
-            graphics.translate(0, p.windowHeight / 2);
+            graphics.translate(0, graphics.height / 2);
             graphics.rotate((2 * Math.PI) / n);
         }
-        graphics.translate(-p.windowWidth / 2, -p.windowHeight / 2);
+        graphics.translate(-graphics.width / 2, -graphics.height / 2);
         background.remove();
         flippedBackground.remove();
         mask.remove();
@@ -4596,32 +4595,33 @@
                 name: 'Pride Art Generator',
             });
             input = {
-                butterflies: true,
-                flowers: true,
                 name: 'Name',
                 flag: 'pride',
                 segments: 5,
-                variant: 0,
-                randomVariant: 0,
+                seed: '',
                 randomise: () => { },
                 backgroundColor: '#323232',
-                diamonds: true,
-                hearts: true,
+                butterflies: 4,
+                flowers: 4,
+                diamonds: 4,
+                hearts: 4,
                 draw: () => { },
+                save: () => { },
             };
             gui.add(input, 'name');
             gui.add(input, 'flag', Object.keys(prideColours));
             gui.add(input, 'segments', 2, 10, 1);
-            gui.add(input, 'variant', 0, 10, 1);
-            gui.add(input, 'flowers');
-            gui.add(input, 'butterflies');
-            gui.add(input, 'diamonds');
-            gui.add(input, 'hearts');
+            gui.add(input, 'seed').listen();
+            gui.add(input, 'flowers', 0, 10, 1);
+            gui.add(input, 'butterflies', 0, 10, 1);
+            gui.add(input, 'diamonds', 0, 10, 1);
+            gui.add(input, 'hearts', 0, 10, 1);
             gui.addColor(input, 'backgroundColor');
             gui.add(input, 'randomise');
             gui.add(input, 'draw');
+            gui.add(input, 'save');
             gui.show();
-            canvas = p.createGraphics(p.windowWidth, p.windowHeight);
+            canvas = p.createGraphics(2000, 2000);
             p.createCanvas(p.windowWidth, p.windowHeight);
             assetManager = new AssetManager(p);
             yield Promise.all([
@@ -4632,8 +4632,11 @@
             loading = false;
             input.draw = () => draw(input, p, assetManager, canvas);
             input.randomise = () => {
-                input.randomVariant = Math.random();
+                input.seed = Math.round(Math.random() * 10e8).toString(16);
                 input.draw();
+            };
+            input.save = () => {
+                graphicsToImage(p, canvas).save(input.name, 'png');
             };
             input.draw();
         });
@@ -4648,7 +4651,7 @@
                 p.text('Loading...', p.width / 2, p.height / 2);
             }
             else {
-                p.image(canvas, 0, 0);
+                p.image(canvas, 0, 0, Math.min(p.windowWidth, p.windowHeight), Math.min(p.windowWidth, p.windowHeight));
             }
         };
     };

@@ -9,20 +9,20 @@ import addImages from './addImages';
 import { InputParams } from './sketch';
 
 export default function drawSlice(p: P5, assetManager: AssetManager,
-  input: InputParams): P5.Graphics {
+  input: InputParams, width: number, height: number): P5.Graphics {
   // @ts-ignore
-  const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
+  const graphics = p.createGraphics(width, height);
   graphics.noStroke();
   // @ts-ignore
   const rand = random;
   // @ts-ignore
-  rand.use(seedrandom(input.name + input.variant + input.randomVariant));
+  rand.use(seedrandom(input.name + input.variant + input.seed));
   const colours: string[] = prideColours[input.flag];
 
   addFlowers(p, graphics, rand, colours, input);
-  addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150, 100, input.butterflies, 2);
-  addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75, 150, input.diamonds, 3);
-  addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100, 75, input.hearts, 3);
+  addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150, 100, input.butterflies);
+  addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75, 150, input.diamonds);
+  addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100, 75, input.hearts);
 
   return graphics;
 }
@@ -35,7 +35,7 @@ export default function drawSlice(
   // @ts-ignore
   // random.use(seedrandom(input.name));
   Math.seedrandom(input.name);
-  const graphics = p.createGraphics(p.windowWidth, p.windowHeight);
+  const graphics = p.createGraphics(width, height);
   graphics.noStroke();
 
   const colours: string[] = prideColours[input.flag];
@@ -50,17 +50,17 @@ export default function drawSlice(
 
   for (let i = 0; i < 5; i += 1) {
     // graphics.fill(p.random(colours));
-    // flower(p, pride, p.random(0, p.windowWidth), p.random(0, p.windowHeight),
+    // flower(p, pride, p.random(0, width), p.random(0, height),
     //   p.random(50, 200), p.random(50, 200));
-    const f = flower(p, colours, randomRange(0, p.windowWidth), randomRange(0, p.windowHeight),
+    const f = flower(p, colours, randomRange(0, width), randomRange(0, height),
       randomRange(50, 200), randomRange(50, 200));
     graphics.image(f, randomRange(0, graphics.width), randomRange(0, graphics.height));
     f.remove();
-    // graphics.circle(p.random(0, p.windowWidth), p.random(0, p.windowHeight), p.random(50, 200));
+    // graphics.circle(p.random(0, width), p.random(0, height), p.random(50, 200));
   }
 
   const butterfly = assetManager.getAsset('butterfly.png');
-  graphics.image(butterfly, 168, p.windowHeight / 2 + 200, 150, 100);
+  graphics.image(butterfly, 168, height / 2 + 200, 150, 100);
 
   return graphics;
 }

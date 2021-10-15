@@ -18,30 +18,34 @@ export default function draw(
     p,
     0,
     (Math.PI) / n,
+    graphics.width,
+    graphics.height,
   );
   const flippedMask = drawMask(
     p,
     -(Math.PI) / n,
     0,
+    graphics.width,
+    graphics.height,
   );
-  const background = drawSlice(p, assetManager, input);
+  const background = drawSlice(p, assetManager, input, graphics.width, graphics.height);
   const flippedBackground = flipVertical(p, background);
   const bgImg = graphicsToImage(p, background);
   const flippedBgImage = graphicsToImage(p, flippedBackground);
   const maskImg = graphicsToImage(p, mask);
   const flippedMaskImg = graphicsToImage(p, flippedMask);
-  graphics.translate(p.windowWidth / 2, p.windowHeight / 2);
+  graphics.translate(graphics.width / 2, graphics.height / 2);
   bgImg.mask(maskImg);
   flippedBgImage.mask(flippedMaskImg);
   for (let i = 0; i < n; i += 1) {
-    graphics.translate(0, -p.windowHeight / 2);
+    graphics.translate(0, -graphics.height / 2);
     graphics.image(bgImg, 0, 0);
     graphics.image(flippedBgImage, 0, 0);
-    graphics.translate(0, p.windowHeight / 2);
+    graphics.translate(0, graphics.height / 2);
 
     graphics.rotate((2 * Math.PI) / n);
   }
-  graphics.translate(-p.windowWidth / 2, -p.windowHeight / 2);
+  graphics.translate(-graphics.width / 2, -graphics.height / 2);
   background.remove();
   flippedBackground.remove();
   mask.remove();
