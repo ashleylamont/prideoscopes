@@ -17,8 +17,9 @@ export default function flower(
   const w = rand.float(10, 20);
   const myRot = rand.float(0, 360);
   graphics.push();
+  graphics.scale(scale);
   graphics.angleMode(p.DEGREES);
-  graphics.translate(x, y);
+  graphics.translate(x / scale, y / scale);
   graphics.rotate(myRot);
   // function to generate petals (and a middle bit, which i called a stamen,
   // but i'm not sure its actually called that)
