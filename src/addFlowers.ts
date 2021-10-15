@@ -20,7 +20,7 @@ export default function addFlowers(
       triangleCy + Math.sin((Math.PI) / input.segments) * triangleSize],
   ];
 
-  for (let i = 0; i < 6; i += 1) {
+  for (let i = 0; i < input.number_flowers; i += 1) {
     const point: [number, number] = [0, 0];
     do {
       // Just spam random points until we intersect the triangle.
