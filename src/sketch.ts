@@ -19,8 +19,9 @@ export interface InputParams {
   diamonds: number;
   backgroundColor: string;
   transparentBg: boolean;
+  previewMode: boolean;
   seed: string;
-  randomise: ()=>void;
+  generateSeed: ()=>void;
   draw: ()=>void;
   save: ()=>void;
 }
@@ -51,32 +52,34 @@ const sketch = (p: P5) => {
       diamondScale: 1.5,
       heartScale: 1.5,
       seed: '',
-      randomise: () => {},
+      generateSeed: () => {},
       backgroundColor: '#323232',
       butterflies: 4,
       flowers: 4,
       diamonds: 4,
       hearts: 4,
       transparentBg: true,
+      previewMode: false,
       draw: () => {},
       save: () => {},
     };
 
     gui.add(input, 'name');
     gui.add(input, 'flag', Object.keys(prideColours));
+    gui.add(input, 'previewMode', true);
     gui.add(input, 'segments', 2, 10, 1);
     gui.add(input, 'flowerScale', 0.1, 5);
     gui.add(input, 'butterflyScale', 0.1, 5);
     gui.add(input, 'diamondScale', 0.1, 5);
     gui.add(input, 'heartScale', 0.1, 5);
-    gui.add(input, 'seed').listen();
     gui.add(input, 'flowers', 0, 10, 1);
     gui.add(input, 'butterflies', 0, 10, 1);
     gui.add(input, 'diamonds', 0, 10, 1);
     gui.add(input, 'hearts', 0, 10, 1);
     gui.addColor(input, 'backgroundColor');
     gui.add(input, 'transparentBg');
-    gui.add(input, 'randomise');
+    gui.add(input, 'generateSeed');
+    gui.add(input, 'seed').listen();
     gui.add(input, 'draw');
     gui.add(input, 'save');
     gui.show();
@@ -94,7 +97,7 @@ const sketch = (p: P5) => {
     loading = false;
 
     input.draw = () => draw(input, p, assetManager, canvas);
-    input.randomise = () => {
+    input.generateSeed = () => {
       input.seed = Math.round(Math.random() * 10e8).toString(16);
       input.draw();
     };
@@ -115,7 +118,7 @@ const sketch = (p: P5) => {
       p.fill('#FFFFFF');
       p.text('Loading...', p.width / 2, p.height / 2);
     } else {
-      p.image(canvas, 0, 0,
+      p.image(canvas, p.windowWidth / 2 - (Math.min(p.windowWidth, p.windowHeight) / 2), 0,
         Math.min(p.windowWidth, p.windowHeight), Math.min(p.windowWidth, p.windowHeight));
     }
   };

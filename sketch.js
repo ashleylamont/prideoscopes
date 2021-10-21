@@ -4535,16 +4535,37 @@
         }
         if (!input.transparentBg) {
             // p.background(220);
-            graphics.noStroke();
             // gutter circle
-            // p.fill('#FFFFFF');
             // p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
-            graphics.fill(input.backgroundColor);
+            // display sticker gutter
             graphics.push();
+            graphics.noStroke();
             graphics.translate(graphics.width / 2, graphics.height / 2);
             // calling angle mode breaks the program for some reason, so this is 90 degrees in radians
             graphics.rotate(1.5708);
+            // drop shadow (draws as white, i don't know why)
+            // p.fill('#393939');
+            // drawPolygon(input.segments * 2, 0, 0, graphics.height + 210);
+            p.fill('#000');
+            p.stroke('252424');
+            p.strokeWeight(15);
+            drawPolygon(input.segments * 2, 0, 0, graphics.height + 200);
+            graphics.fill(input.backgroundColor);
             drawPolygon(input.segments * 2, 0, 0, graphics.height);
+            graphics.pop();
+        }
+        if (input.previewMode) {
+            graphics.push();
+            // gutter circle
+            // p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
+            // display sticker gutter
+            graphics.push();
+            graphics.translate(graphics.width / 2, graphics.height / 2);
+            graphics.rotate(1.5708);
+            p.stroke('252424');
+            p.fill('#000000');
+            p.strokeWeight(10);
+            drawPolygon(input.segments * 2, 0, 0, graphics.height + 200);
             graphics.pop();
         }
         const background = drawSlice(p, assetManager, input, graphics.width, graphics.height);
@@ -4594,31 +4615,33 @@
                 diamondScale: 1.5,
                 heartScale: 1.5,
                 seed: '',
-                randomise: () => { },
+                generateSeed: () => { },
                 backgroundColor: '#323232',
                 butterflies: 4,
                 flowers: 4,
                 diamonds: 4,
                 hearts: 4,
                 transparentBg: true,
+                previewMode: false,
                 draw: () => { },
                 save: () => { },
             };
             gui.add(input, 'name');
             gui.add(input, 'flag', Object.keys(prideColours));
+            gui.add(input, 'previewMode', true);
             gui.add(input, 'segments', 2, 10, 1);
             gui.add(input, 'flowerScale', 0.1, 5);
             gui.add(input, 'butterflyScale', 0.1, 5);
             gui.add(input, 'diamondScale', 0.1, 5);
             gui.add(input, 'heartScale', 0.1, 5);
-            gui.add(input, 'seed').listen();
             gui.add(input, 'flowers', 0, 10, 1);
             gui.add(input, 'butterflies', 0, 10, 1);
             gui.add(input, 'diamonds', 0, 10, 1);
             gui.add(input, 'hearts', 0, 10, 1);
             gui.addColor(input, 'backgroundColor');
             gui.add(input, 'transparentBg');
-            gui.add(input, 'randomise');
+            gui.add(input, 'generateSeed');
+            gui.add(input, 'seed').listen();
             gui.add(input, 'draw');
             gui.add(input, 'save');
             gui.show();
@@ -4632,7 +4655,7 @@
             ]);
             loading = false;
             input.draw = () => draw(input, p, assetManager, canvas);
-            input.randomise = () => {
+            input.generateSeed = () => {
                 input.seed = Math.round(Math.random() * 10e8).toString(16);
                 input.draw();
             };
@@ -4652,7 +4675,7 @@
                 p.text('Loading...', p.width / 2, p.height / 2);
             }
             else {
-                p.image(canvas, 0, 0, Math.min(p.windowWidth, p.windowHeight), Math.min(p.windowWidth, p.windowHeight));
+                p.image(canvas, p.windowWidth / 2 - (Math.min(p.windowWidth, p.windowHeight) / 2), 0, Math.min(p.windowWidth, p.windowHeight), Math.min(p.windowWidth, p.windowHeight));
             }
         };
     };
