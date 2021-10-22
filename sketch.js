@@ -4625,21 +4625,23 @@
                 previewMode: false,
                 draw: () => { },
                 save: () => { },
+                randomiseParams: () => { },
             };
             gui.add(input, 'name');
             gui.add(input, 'flag', Object.keys(prideColours));
             gui.add(input, 'previewMode', true);
             gui.add(input, 'segments', 2, 10, 1);
-            gui.add(input, 'flowerScale', 0.1, 5);
-            gui.add(input, 'butterflyScale', 0.1, 5);
-            gui.add(input, 'diamondScale', 0.1, 5);
-            gui.add(input, 'heartScale', 0.1, 5);
+            gui.add(input, 'flowerScale', 0.5, 5);
+            gui.add(input, 'butterflyScale', 0.5, 5);
+            gui.add(input, 'diamondScale', 0.5, 5);
+            gui.add(input, 'heartScale', 0.5, 5);
             gui.add(input, 'flowers', 0, 10, 1);
             gui.add(input, 'butterflies', 0, 10, 1);
             gui.add(input, 'diamonds', 0, 10, 1);
             gui.add(input, 'hearts', 0, 10, 1);
             gui.addColor(input, 'backgroundColor');
             gui.add(input, 'transparentBg');
+            gui.add(input, 'randomiseParams');
             gui.add(input, 'generateSeed');
             gui.add(input, 'seed').listen();
             gui.add(input, 'draw');
@@ -4660,7 +4662,21 @@
                 input.draw();
             };
             input.save = () => {
+                input.previewMode = false;
+                input.draw();
                 graphicsToImage(p, canvas).save(input.name, 'png');
+            };
+            input.randomiseParams = () => {
+                input.segments = Math.round(Math.random() * (10 - 2) + 2);
+                input.flowerScale = Math.random() * (5 - 0.5) + 0.5;
+                input.butterflyScale = Math.random() * (5 - 0.5) + 0.5;
+                input.heartScale = Math.random() * (5 - 0.5) + 0.5;
+                input.diamondScale = Math.random() * (5 - 0.5) + 0.5;
+                input.flowers = Math.round(Math.random() * (10 - 1) + 1);
+                input.diamonds = Math.round(Math.random() * (10 - 1) + 1);
+                input.hearts = Math.round(Math.random() * (10 - 1) + 1);
+                input.butterflies = Math.round(Math.random() * (10 - 1) + 1);
+                input.draw();
             };
             input.draw();
         });
