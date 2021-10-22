@@ -4534,38 +4534,13 @@
             graphics.endShape();
         }
         if (!input.transparentBg) {
-            // p.background(220);
-            // gutter circle
-            // p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
-            // display sticker gutter
             graphics.push();
             graphics.noStroke();
             graphics.translate(graphics.width / 2, graphics.height / 2);
             // calling angle mode breaks the program for some reason, so this is 90 degrees in radians
             graphics.rotate(1.5708);
-            // drop shadow (draws as white, i don't know why)
-            // p.fill('#393939');
-            // drawPolygon(input.segments * 2, 0, 0, graphics.height + 210);
-            p.fill('#000');
-            p.stroke('252424');
-            p.strokeWeight(15);
-            drawPolygon(input.segments * 2, 0, 0, graphics.height + 200);
             graphics.fill(input.backgroundColor);
-            drawPolygon(input.segments * 2, 0, 0, graphics.height);
-            graphics.pop();
-        }
-        if (input.previewMode) {
-            graphics.push();
-            // gutter circle
-            // p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
-            // display sticker gutter
-            graphics.push();
-            graphics.translate(graphics.width / 2, graphics.height / 2);
-            graphics.rotate(1.5708);
-            p.stroke('252424');
-            p.fill('#000000');
-            p.strokeWeight(10);
-            drawPolygon(input.segments * 2, 0, 0, graphics.height + 200);
+            drawPolygon(input.segments * 2, 0, 0, graphics.width);
             graphics.pop();
         }
         const background = drawSlice(p, assetManager, input, graphics.width, graphics.height);
@@ -4682,16 +4657,54 @@
         });
         // eslint-disable-next-line no-param-reassign
         p.draw = () => {
+            // maybe should move this to another file but eh
+            function drawPolygon(num, x, y, d) {
+                p.beginShape();
+                for (let i = 0; i < num + 1; i += 1) {
+                    const angle = (p.TWO_PI / num) * i;
+                    const px = x + (p.sin(angle) * d) / 2;
+                    const py = y - (p.cos(angle) * d) / 2;
+                    p.vertex(px, py, 0);
+                }
+                p.endShape();
+            }
             p.frameRate(1);
             p.clear();
             p.background(input.backgroundColor);
+            // Maybe we want to actually move this outside of the thing so we can have the toggle change it
+            if (input.previewMode) {
+                p.push();
+                // gutter circle
+                // p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
+                // display sticker gutter
+                p.push();
+                p.translate(p.width / 2, p.height / 2);
+                p.rotate(1.5708);
+                p.noStroke();
+                p.fill('rgba(28,27,30,0.25)');
+                drawPolygon(input.segments * 2, 30, 30, p.height);
+                p.stroke('#1c1b1e');
+                p.fill('#FFFFFF');
+                if (input.transparentBg) {
+                    p.noFill();
+                }
+                p.strokeWeight(2);
+                drawPolygon(input.segments * 2, 0, 0, p.height);
+                p.pop();
+            }
             if (loading) {
                 p.textAlign(p.CENTER, p.CENTER);
                 p.fill('#FFFFFF');
                 p.text('Loading...', p.width / 2, p.height / 2);
             }
             else {
-                p.image(canvas, p.windowWidth / 2 - (Math.min(p.windowWidth, p.windowHeight) / 2), 0, Math.min(p.windowWidth, p.windowHeight), Math.min(p.windowWidth, p.windowHeight));
+                const s = Math.min(p.windowWidth, p.windowHeight);
+                if (input.previewMode) {
+                    p.image(canvas, p.windowWidth / 2 - ((s - 100) / 2), p.windowHeight / 2 - ((s - 100) / 2), s - 100, s - 100);
+                }
+                else {
+                    p.image(canvas, p.windowWidth / 2 - (s / 2), 0, s, s);
+                }
             }
         };
     };

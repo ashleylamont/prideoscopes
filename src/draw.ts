@@ -42,41 +42,13 @@ export default function draw(
   }
 
   if (!input.transparentBg) {
-    // p.background(220);
-    // gutter circle
-    // p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
-
-    // display sticker gutter
     graphics.push();
     graphics.noStroke();
     graphics.translate(graphics.width / 2, graphics.height / 2);
     // calling angle mode breaks the program for some reason, so this is 90 degrees in radians
     graphics.rotate(1.5708);
-    // drop shadow (draws as white, i don't know why)
-    // p.fill('#393939');
-    // drawPolygon(input.segments * 2, 0, 0, graphics.height + 210);
-    p.fill('#000');
-    p.stroke('252424');
-    p.strokeWeight(15);
-    drawPolygon(input.segments * 2, 0, 0, graphics.height + 200);
     graphics.fill(input.backgroundColor);
-    drawPolygon(input.segments * 2, 0, 0, graphics.height);
-    graphics.pop();
-  }
-
-  if (input.previewMode) {
-    graphics.push();
-    // gutter circle
-    // p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
-
-    // display sticker gutter
-    graphics.push();
-    graphics.translate(graphics.width / 2, graphics.height / 2);
-    graphics.rotate(1.5708);
-    p.stroke('252424');
-    p.fill('#000000');
-    p.strokeWeight(10);
-    drawPolygon(input.segments * 2, 0, 0, graphics.height + 200);
+    drawPolygon(input.segments * 2, 0, 0, graphics.width);
     graphics.pop();
   }
 
