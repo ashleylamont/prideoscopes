@@ -17,12 +17,18 @@ export default function drawSlice(p: P5, assetManager: AssetManager,
   const rand = random;
   // @ts-ignore
   rand.use(seedrandom(input.name + input.variant + input.seed));
-  const colours: string[] = prideColours[input.flag];
+  const colours: string[] = prideColours[input['Pride Flag']];
 
   addFlowers(p, graphics, rand, colours, input);
-  addImages(p, graphics, rand, colours, input, assetManager, 'butterflywhite.png', 150 * input.butterflyScale, 100 * input.butterflyScale, input.butterflies);
-  addImages(p, graphics, rand, colours, input, assetManager, 'diamondwhite.png', 75 * input.diamondScale, 150 * input.diamondScale, input.diamonds);
-  addImages(p, graphics, rand, colours, input, assetManager, 'heartwhite.png', 100 * input.heartScale, 75 * input.heartScale, input.hearts);
+  addImages(p, graphics, rand, colours, input, assetManager,
+    'butterflywhite.png', 150 * input['Butterfly Scale'],
+    100 * input['Butterfly Scale'], input['Number of Butterflies']);
+  addImages(p, graphics, rand, colours, input, assetManager,
+    'diamondwhite.png', 75 * input['Diamond Scale'],
+    150 * input['Diamond Scale'], input['Number of Diamonds']);
+  addImages(p, graphics, rand, colours, input, assetManager,
+    'heartwhite.png', 100 * input['Heart Scale'],
+    75 * input['Heart Scale'], input['Number of Hearts']);
 
   return graphics;
 }

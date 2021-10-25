@@ -43,6 +43,9 @@
     "eslint-config-p5js": "^1.1.0",
     "eslint-plugin-import": "^2.24.2",
     "rollup": "^2.57.0",
+    "rollup-plugin-import-css": "^3.0.2",
+    "stylelint": "^14.0.0",
+    "stylelint-config-standard": "^23.0.0",
     "tslib": "^2.3.1"
   }
 }

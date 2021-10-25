@@ -13,7 +13,7 @@ export default function draw(
   graphics: P5.Graphics,
 ): void {
   graphics.clear();
-  const n = input.segments;
+  const n = input['Number of Segments'];
   const mask = drawMask(
     p,
     0,
@@ -41,14 +41,14 @@ export default function draw(
     graphics.endShape();
   }
 
-  if (!input.transparentBg) {
+  if (!input['Use Transparent Background']) {
     graphics.push();
     graphics.noStroke();
     graphics.translate(graphics.width / 2, graphics.height / 2);
     // calling angle mode breaks the program for some reason, so this is 90 degrees in radians
     graphics.rotate(1.5708);
-    graphics.fill(input.backgroundColor);
-    drawPolygon(input.segments * 2, 0, 0, graphics.width);
+    graphics.fill(input['Background Color']);
+    drawPolygon(input['Number of Segments'] * 2, 0, 0, graphics.width);
     graphics.pop();
   }
 

@@ -19,8 +19,8 @@ export default function addImages(
     [triangleCx, triangleCy],
     [triangleCx + Math.cos(0) * triangleSize,
       triangleCy + Math.sin(0) * triangleSize],
-    [triangleCx + Math.cos((Math.PI) / input.segments) * triangleSize,
-      triangleCy + Math.sin((Math.PI) / input.segments) * triangleSize],
+    [triangleCx + Math.cos((Math.PI) / input['Number of Segments']) * triangleSize,
+      triangleCy + Math.sin((Math.PI) / input['Number of Segments']) * triangleSize],
   ];
 
   for (let i = 0; i < draw; i += 1) {

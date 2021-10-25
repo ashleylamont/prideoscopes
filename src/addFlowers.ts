@@ -16,8 +16,8 @@ export default function addFlowers(
     [triangleCx, triangleCy],
     [triangleCx + Math.cos(0) * triangleSize,
       triangleCy + Math.sin(0) * triangleSize],
-    [triangleCx + Math.cos((Math.PI) / input.segments) * triangleSize,
-      triangleCy + Math.sin((Math.PI) / input.segments) * triangleSize],
+    [triangleCx + Math.cos((Math.PI) / input['Number of Segments']) * triangleSize,
+      triangleCy + Math.sin((Math.PI) / input['Number of Segments']) * triangleSize],
   ];
 
   for (let i = 0; i < 10; i += 1) {
@@ -28,10 +28,10 @@ export default function addFlowers(
       point[1] = rand.float(0, graphics.height);
     } while (!pointInPolygon(point, slicePolygon));
     const f = flower(
-      p, colours, ...point, graphics.width, graphics.height, rand, input.flowerScale,
+      p, colours, ...point, graphics.width, graphics.height, rand, input['Flowers Scale'],
     );
     // Generate the flower regardless to not affect random number generation.
-    if (i < input.flowers) graphics.image(f, 0, 0);
+    if (i < input['Flowers Scale']) graphics.image(f, 0, 0);
     f.remove();
   }
 }

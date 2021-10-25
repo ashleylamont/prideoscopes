@@ -4,27 +4,28 @@ import AssetManager from './assetManager';
 import prideColours from './prideColours';
 import draw from './draw';
 import graphicsToImage from './graphicsToImage';
+import './styles.css';
 
 export interface InputParams {
-  name: string;
-  flag: string;
-  segments: number;
-  flowerScale: number;
-  butterflyScale: number;
-  diamondScale: number;
-  heartScale: number;
-  flowers: number;
-  butterflies: number;
-  hearts: number;
-  diamonds: number;
-  backgroundColor: string;
-  transparentBg: boolean;
-  previewMode: boolean;
-  seed: string;
-  generateSeed: ()=>void;
-  randomiseParams: ()=>void;
-  draw: ()=>void;
-  save: ()=>void;
+  'User Name': string;
+  'Pride Flag': string;
+  'Number of Segments': number;
+  'Flowers Scale': number;
+  'Butterfly Scale': number;
+  'Diamond Scale': number;
+  'Heart Scale': number;
+  'Number of Flowers': number;
+  'Number of Butterflies': number;
+  'Number of Hearts': number;
+  'Number of Diamonds': number;
+  'Background Color': string;
+  'Use Transparent Background': boolean;
+  'Preview Sticker Shape': boolean;
+  'Random Seed': string;
+  'New Random Seed': ()=>void;
+  'Randomise Artwork Settings': ()=>void;
+  'Draw Sticker': ()=>void;
+  'Save Sticker': ()=>void;
 }
 
 if (window.localStorage.getItem('instructions') === null) {
@@ -45,46 +46,49 @@ const sketch = (p: P5) => {
     });
 
     input = {
-      name: 'Name',
-      flag: 'pride',
-      segments: 5,
-      flowerScale: 1.5,
-      butterflyScale: 1.5,
-      diamondScale: 1.5,
-      heartScale: 1.5,
-      seed: '',
-      generateSeed: () => {},
-      backgroundColor: '#323232',
-      butterflies: 4,
-      flowers: 4,
-      diamonds: 4,
-      hearts: 4,
-      transparentBg: true,
-      previewMode: false,
-      draw: () => {},
-      save: () => {},
-      randomiseParams: () => {},
+      'User Name': 'Name',
+      'Pride Flag': 'pride',
+      'Number of Segments': 5,
+      'Flowers Scale': 1.5,
+      'Butterfly Scale': 1.5,
+      'Diamond Scale': 1.5,
+      'Heart Scale': 1.5,
+      'Random Seed': '',
+      'New Random Seed': () => {},
+      'Background Color': '#323232',
+      'Number of Butterflies': 4,
+      'Number of Flowers': 4,
+      'Number of Diamonds': 4,
+      'Number of Hearts': 4,
+      'Use Transparent Background': true,
+      'Preview Sticker Shape': false,
+      'Draw Sticker': () => {},
+      'Save Sticker': () => {},
+      'Randomise Artwork Settings': () => {},
     };
 
-    gui.add(input, 'name');
-    gui.add(input, 'flag', Object.keys(prideColours));
-    gui.add(input, 'previewMode', true);
-    gui.add(input, 'segments', 2, 10, 1).listen();
-    gui.add(input, 'flowerScale', 0.5, 5).listen();
-    gui.add(input, 'butterflyScale', 0.5, 5).listen();
-    gui.add(input, 'diamondScale', 0.5, 5).listen();
-    gui.add(input, 'heartScale', 0.5, 5).listen();
-    gui.add(input, 'flowers', 0, 10, 1).listen();
-    gui.add(input, 'butterflies', 0, 10, 1).listen();
-    gui.add(input, 'diamonds', 0, 10, 1).listen();
-    gui.add(input, 'hearts', 0, 10, 1).listen();
-    gui.addColor(input, 'backgroundColor');
-    gui.add(input, 'transparentBg');
-    gui.add(input, 'randomiseParams');
-    gui.add(input, 'generateSeed');
-    gui.add(input, 'seed').listen();
-    gui.add(input, 'draw');
-    gui.add(input, 'save');
+    const inputsFolder = gui.addFolder('Inputs');
+    inputsFolder.add(input, 'User Name');
+    inputsFolder.add(input, 'Random Seed').listen();
+    inputsFolder.add(input, 'New Random Seed');
+    const parametersFolder = gui.addFolder('Artwork Settings');
+    parametersFolder.add(input, 'Pride Flag', Object.keys(prideColours));
+    parametersFolder.add(input, 'Number of Segments', 2, 10, 1).listen();
+    parametersFolder.add(input, 'Flowers Scale', 0.5, 5).listen();
+    parametersFolder.add(input, 'Butterfly Scale', 0.5, 5).listen();
+    parametersFolder.add(input, 'Diamond Scale', 0.5, 5).listen();
+    parametersFolder.add(input, 'Heart Scale', 0.5, 5).listen();
+    parametersFolder.add(input, 'Number of Flowers', 0, 10, 1).listen();
+    parametersFolder.add(input, 'Number of Butterflies', 0, 10, 1).listen();
+    parametersFolder.add(input, 'Number of Diamonds', 0, 10, 1).listen();
+    parametersFolder.add(input, 'Number of Hearts', 0, 10, 1).listen();
+    parametersFolder.add(input, 'Randomise Artwork Settings');
+    const stickerFolder = gui.addFolder('Sticker Settings');
+    stickerFolder.addColor(input, 'Background Color');
+    stickerFolder.add(input, 'Use Transparent Background');
+    gui.add(input, 'Preview Sticker Shape', true);
+    gui.add(input, 'Draw Sticker');
+    gui.add(input, 'Save Sticker');
     gui.show();
 
     canvas = p.createGraphics(2000, 2000);
@@ -99,32 +103,32 @@ const sketch = (p: P5) => {
     ]);
     loading = false;
 
-    input.draw = () => draw(input, p, assetManager, canvas);
-    input.generateSeed = () => {
-      input.seed = Math.round(Math.random() * 10e8).toString(16);
-      input.draw();
+    input['Draw Sticker'] = () => draw(input, p, assetManager, canvas);
+    input['New Random Seed'] = () => {
+      input['Random Seed'] = Math.round(Math.random() * 10e8).toString(16);
+      input['Draw Sticker']();
     };
-    input.save = () => {
-      input.previewMode = false;
-      input.draw();
-      graphicsToImage(p, canvas).save(input.name, 'png');
-    };
-
-    input.randomiseParams = () => {
-      input.segments = Math.round(Math.random() * (10 - 2) + 2);
-      input.flowerScale = Math.random() * (5 - 0.5) + 0.5;
-      input.butterflyScale = Math.random() * (5 - 0.5) + 0.5;
-      input.heartScale = Math.random() * (5 - 0.5) + 0.5;
-      input.diamondScale = Math.random() * (5 - 0.5) + 0.5;
-      input.flowers = Math.round(Math.random() * (10 - 1) + 1);
-      input.diamonds = Math.round(Math.random() * (10 - 1) + 1);
-      input.hearts = Math.round(Math.random() * (10 - 1) + 1);
-      input.butterflies = Math.round(Math.random() * (10 - 1) + 1);
-
-      input.draw();
+    input['Save Sticker'] = () => {
+      input['Preview Sticker Shape'] = false;
+      input['Draw Sticker']();
+      graphicsToImage(p, canvas).save(input['User Name'], 'png');
     };
 
-    input.draw();
+    input['Randomise Artwork Settings'] = () => {
+      input['Number of Segments'] = Math.round(Math.random() * (10 - 2) + 2);
+      input['Flowers Scale'] = Math.random() * (5 - 0.5) + 0.5;
+      input['Butterfly Scale'] = Math.random() * (5 - 0.5) + 0.5;
+      input['Heart Scale'] = Math.random() * (5 - 0.5) + 0.5;
+      input['Diamond Scale'] = Math.random() * (5 - 0.5) + 0.5;
+      input['Number of Flowers'] = Math.round(Math.random() * (10 - 1) + 1);
+      input['Number of Diamonds'] = Math.round(Math.random() * (10 - 1) + 1);
+      input['Number of Hearts'] = Math.round(Math.random() * (10 - 1) + 1);
+      input['Number of Butterflies'] = Math.round(Math.random() * (10 - 1) + 1);
+
+      input['Draw Sticker']();
+    };
+
+    input['Draw Sticker']();
   };
 
   // eslint-disable-next-line no-param-reassign
@@ -142,10 +146,10 @@ const sketch = (p: P5) => {
     }
     p.frameRate(1);
     p.clear();
-    p.background(input.backgroundColor);
+    p.background(input['Background Color']);
 
     // Maybe we want to actually move this outside of the thing so we can have the toggle change it
-    if (input.previewMode) {
+    if (input['Preview Sticker Shape']) {
       p.push();
       // gutter circle
       // p.circle(p.windowWidth / 2, p.windowHeight / 2, p.windowHeight + 25);
@@ -155,14 +159,14 @@ const sketch = (p: P5) => {
       p.rotate(1.5708);
       p.noStroke();
       p.fill('rgba(28,27,30,0.25)');
-      drawPolygon(input.segments * 2, 30, 30, p.height);
+      drawPolygon(input['Number of Segments'] * 2, 30, 30, p.height);
       p.stroke('#1c1b1e');
       p.fill('#FFFFFF');
-      if (input.transparentBg) {
+      if (input['Use Transparent Background']) {
         p.noFill();
       }
       p.strokeWeight(2);
-      drawPolygon(input.segments * 2, 0, 0, p.height);
+      drawPolygon(input['Number of Segments'] * 2, 0, 0, p.height);
       p.pop();
     }
     if (loading) {
@@ -171,7 +175,7 @@ const sketch = (p: P5) => {
       p.text('Loading...', p.width / 2, p.height / 2);
     } else {
       const s = Math.min(p.windowWidth, p.windowHeight);
-      if (input.previewMode) {
+      if (input['Preview Sticker Shape']) {
         p.image(canvas, p.windowWidth / 2 - ((s - 100) / 2), p.windowHeight / 2 - ((s - 100) / 2),
           s - 100, s - 100);
       } else {
