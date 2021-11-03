@@ -1,6 +1,6 @@
 import P5 from 'p5';
 import seedrandom from 'seedrandom';
-import random from 'random';
+import random, { RNG } from 'random';
 import AssetManager from './assetManager';
 import prideColours from './prideColours';
 import 'p5/src/math/random';
@@ -10,13 +10,10 @@ import { InputParams } from './sketch';
 
 export default function drawSlice(p: P5, assetManager: AssetManager,
   input: InputParams, width: number, height: number): P5.Graphics {
-  // @ts-ignore
   const graphics = p.createGraphics(width, height);
   graphics.noStroke();
-  // @ts-ignore
   const rand = random;
-  // @ts-ignore
-  rand.use(seedrandom(input.name + input.variant + input.seed));
+  rand.use(seedrandom(input['User Name'] + input['Random Seed']) as unknown as RNG);
   const colours: string[] = prideColours[input['Pride Flag']];
 
   addFlowers(p, graphics, rand, colours, input);
