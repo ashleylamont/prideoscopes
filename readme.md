@@ -2,7 +2,7 @@
 
 ### Authors
 - [Ashley Lamont](https://github.com/ashleylamont/)
-- [Talyah Livanes](reddropgraphics.com.au)
+- [Talyah Livanes](https://reddropgraphics.com.au)
 - [Saffron Bannister](https://github.com/u6062525/)
 
 ### Background
